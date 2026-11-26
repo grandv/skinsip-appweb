@@ -170,6 +170,45 @@ button.st{cursor:pointer}
 .st b{display:block;font-family:Prompt,sans-serif;font-style:italic;font-size:18px}
 .st small{display:block;font-size:14px;color:var(--ink)}
 .st em{display:block;font-style:normal;font-size:13px;color:var(--co);font-weight:600;margin-top:2px}.st em.m{color:var(--mute);font-weight:400}
+
+/* ---- compact home ---- */
+.home .member{margin-bottom:10px}
+.hd2{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:16px 0 8px}
+.hd2 .ttl{margin:0;font-size:19px}
+.lnk{border:0;background:none;color:var(--co);font-weight:600;cursor:pointer;padding:6px 0;min-height:32px;font-size:14px}
+.stories{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{flex:0 0 44%;max-width:190px;aspect-ratio:4/5;padding:0;border:1px solid #fff;border-radius:18px;overflow:hidden;scroll-snap-align:start;background:#e3effd;cursor:pointer;box-shadow:0 8px 20px rgba(31,63,154,.12)}
+.story img{width:100%;height:100%;object-fit:cover;display:block}
+.story:focus-visible{outline:3px solid #3f8fea;outline-offset:2px}
+.steprow{display:flex;align-items:center;gap:6px;margin-top:6px}
+.steprow>button,.steprow>div{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:999px;font:italic 700 14px Prompt,sans-serif;color:var(--co);cursor:pointer;padding:0 8px}
+.steprow>div{color:var(--mute);cursor:default}
+.steprow i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:linear-gradient(135deg,#8cc2fb,#3f8fea);font-style:normal}
+.steprow>span{color:#9cb5d9}
+.pcards{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:8px}
+.pc{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:4px;cursor:pointer;box-shadow:0 6px 18px rgba(31,63,154,.07);min-width:0}
+.pc.hot{background:linear-gradient(170deg,#e1eeff,#fff 60%);border-color:#b9d5f7}
+.pc .tag{position:absolute;top:8px;left:8px;margin:0;font-size:11px}
+.pc .pa{height:84px;display:grid;place-items:center}
+.pc b{font-size:13px;line-height:1.3}
+.pc .pr{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:auto}
+.pc .price{font-size:15px}
+.pc .add{width:34px;height:34px;font-size:18px;flex:none}
+.row2{display:flex;align-items:center;gap:10px;margin-top:12px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mini button{display:flex;align-items:center;gap:8px;min-height:52px;padding:0 12px;border:1px solid var(--line);background:#fff;border-radius:16px;cursor:pointer;font-size:14px;color:var(--ink);text-align:left}
+.mini svg{width:22px;height:22px;color:#3f8fea;flex:none}
+.lb{position:fixed;inset:0;z-index:30;background:rgba(11,31,79,.72);backdrop-filter:blur(6px)}
+.lb[hidden]{display:none}
+.lbtrack{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.lbtrack::-webkit-scrollbar{display:none}
+.lbs{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:56px 16px 24px}
+.lbs img{max-width:min(100%,460px);max-height:calc(100% - 70px);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.lbx{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--ink);font-size:18px;cursor:pointer}
+.lbn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:var(--ink);font-size:24px;cursor:pointer}
+.lbn.p{left:10px}.lbn.n{right:10px}
+@media(max-width:520px){.lbn{display:none}}
 </style>
 </head>
 <body>
@@ -237,7 +276,8 @@ const SLIDES=[
 ];
 const strip=x=>x.replace(/<\/?svg[^>]*>/g,'');
 const slideArt=k=>k==='duo'?`<g transform="translate(6 30) scale(1.1)">${strip(tube(60))}</g><g transform="translate(56 40)">${strip(bottle(60))}</g>`:k==='gel'?`<g transform="translate(24 14) scale(1.5)">${strip(tube(60))}</g>`:`<g transform="translate(24 18) scale(1.45)">${strip(bottle(60))}</g>`;
-const slider=()=>`<div class="slider"><div class="track" id="track">${SLIDES.map((x,i)=>`<div class="slide pic" aria-label="สไลด์ ${i+1} จาก ${SLIDES.length}"><img src="${x.img}" alt="${x.alt}" loading="${i?'lazy':'eager'}">${x.b?`<button class="sbtn over" ${x.a}>${x.b}</button>`:''}</div>`).join('')}</div><div class="dots">${SLIDES.map((x,i)=>`<button class="dot${i?'':' on'}" data-dot="${i}" aria-label="ไปสไลด์ ${i+1}"></button>`).join('')}</div></div>`;
+const slider=()=>`<div class="stories" id="track">${SLIDES.map((x,i)=>`<button class="story" data-story="${i}" aria-label="เปิดภาพ ${i+1}: ${x.alt}"><img src="${x.img}" alt="${x.alt}" loading="${i<2?'eager':'lazy'}"></button>`).join('')}</div>`;
+const lbHtml=()=>`<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="ภาพความรู้เรื่องเกราะผิว"><div class="lbtrack" id="lbtrack">${SLIDES.map((x,i)=>`<div class="lbs"><img src="${x.img}" alt="${x.alt}" loading="lazy">${x.b?`<button class="sbtn" ${x.a} data-lbclose>${x.b}</button>`:''}</div>`).join('')}</div><button class="lbx" data-lbclose aria-label="ปิด">✕</button><button class="lbn p" data-lbnav="-1" aria-label="ภาพก่อนหน้า">‹</button><button class="lbn n" data-lbnav="1" aria-label="ภาพถัดไป">›</button></div>`;
 const V={
 login:()=>`<main style="padding-bottom:30px"><div class="hero" style="min-height:300px;margin-top:10px"><h1>SKINSIP</h1><p>ดูแลเกราะผิวทุกวัน ซื้อสินค้า ถามข้อมูล และติดตามออเดอร์ได้ในที่เดียว</p><svg viewBox="0 0 120 140" preserveAspectRatio="xMidYMax meet">${'<g transform="translate(6 30) scale(1.1)">'+tube(60).replace(/<\/?svg[^>]*>/g,'')+'</g><g transform="translate(56 40) scale(1)">'+bottle(60).replace(/<\/?svg[^>]*>/g,'')+'</g>'}</svg></div>
 <button class="btn line" data-act="line">เข้าสู่ระบบด้วย LINE</button><button class="btn ghost" data-act="guest">ดูสินค้าก่อน (ไม่ต้องสมัคร)</button><p class="note">ต้นแบบ: ปุ่ม LINE จำลองการดึงชื่อจากบัญชี LINE</p></main>`,
@@ -250,18 +290,16 @@ signup:()=>`${top('สมัครสมาชิก','login')}<main><div class=
 <label class="check"><input type="checkbox" id="c2">ยินยอมรับข่าวสารและโปรโมชั่นผ่าน LINE</label>
 <button class="btn" type="submit">รับรหัส OTP</button></form></main>`,
 otp:()=>`${top('ยืนยันเบอร์โทร','signup')}<main><div class="steps"><i style="width:100%"></i></div><p>ส่งรหัส 6 หลักไปที่ <b>${esc(S.user.phone)}</b></p><div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="o${i}" inputmode="numeric" maxlength="1" aria-label="รหัสหลักที่ ${i+1}">`).join('')}</div><button class="btn" data-act="otp">ยืนยัน</button><p class="note">ต้นแบบ: ใส่เลขอะไรก็ได้ 6 หลัก</p></main>`,
-home:()=>`<main><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?'SILVER MEMBER':'ยังไม่ได้เข้าสู่ระบบ'}</div></div><div class="brand">SKINSIP<small>BLUE LAB</small></div></div>
+home:()=>`<main class="home"><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?`SILVER MEMBER · ${S.points.toLocaleString()} แต้ม`:'ยังไม่ได้เข้าสู่ระบบ'}</div></div><div class="brand">SKINSIP<small>BLUE LAB</small></div></div>
+<div class="hd2"><h2 class="ttl">เกราะผิว<span class="sky">อ่อนแอ</span>หรือเปล่า?</h2><span class="small">แตะเพื่ออ่าน</span></div>
 ${slider()}
-<div class="credit"><span>แต้มสะสม <b style="color:var(--ink)">${S.points.toLocaleString()} แต้ม</b></span><span>10 แต้ม = ฿1</span></div>${S.orders.length?`<div class="refer" style="display:flex;align-items:center;gap:10px;margin-top:10px"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0;background:var(--co);color:#fff" data-reorder="0">สั่งซ้ำ</button></div>`:''}
-<div class="quick"><button data-tab="shop">${ic('shop')}ซื้อสินค้า</button><button data-tab="consult">${ic('chat')}ถามสินค้า</button><button data-tab="reviews">${ic('play')}รีวิว</button><button data-go="agent">${ic('agent')}เป็นตัวแทน</button></div>
-<h2 class="ttl">3 สเต็ปกู้ผิว <span class="sky">Less But Better</span></h2>
-<div class="steps3">
- <button class="st" data-p="mousse"><i>1</i><span><b class="sky">Cleanse</b><small>ล้างหน้าอย่างอ่อนโยน ไม่ทำลายน้ำมันธรรมชาติ</small><em>Barrier Comfort Cleansing Mousse ›</em></span></button>
- <button class="st" data-p="gel"><i>2</i><span><b class="sky">Repair</b><small>เติมความชุ่มชื้น เสริมเกราะป้องกันผิว</small><em>Barrier Repair Gel ›</em></span></button>
- <div class="st"><i>3</i><span><b class="sky">Protect</b><small>ทากันแดดทุกเช้า ไม่ให้ผิวโดนทำร้ายซ้ำ</small><em class="m">ใช้กันแดดที่คุณใช้อยู่ได้เลย</em></span></div>
-</div>
-<h2>สินค้าแนะนำ</h2>${plist()}
-<h2>ออเดอร์ล่าสุด</h2>${S.orders.length?orderRows(1):'<p class="mute">ยังไม่มีออเดอร์</p>'}</main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
+<div class="steprow" aria-label="3 สเต็ปกู้ผิว Less But Better"><button data-p="mousse"><i>1</i>Cleanse</button><span>›</span><button data-p="gel"><i>2</i>Repair</button><span>›</span><div><i>3</i>Protect</div></div>
+<div class="hd2"><h2 class="ttl">ช้อป <span class="sky">Less But Better</span></h2><button class="lnk" data-tab="shop">ดูทั้งหมด ›</button></div>
+<div class="pcards">${['duo','gel','mousse'].map(id=>{const p=P.find(x=>x.id===id);return `<div class="pc${id==='duo'?' hot':''}" data-p="${p.id}" role="button" tabindex="0">${id==='duo'?'<span class="tag">คุ้มสุด</span>':''}<div class="pa">${art(p,id==='duo'?70:56)}</div><b>${p.short}</b><div class="pr"><span class="price">${baht(p.price)}</span><button class="add" data-add="${p.id}" aria-label="ใส่ตะกร้า ${p.short}">+</button></div></div>`}).join('')}</div>
+${S.orders.length?`<div class="refer row2"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">${esc(S.orders[0].items)} · สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0" data-reorder="0">สั่งซ้ำ</button></div>`:''}
+<div class="mini"><button data-tab="reviews">${ic('play')}<span>รีวิวผู้ใช้</span></button><button data-go="agent">${ic('agent')}<span>${S.approved?'แดชบอร์ดตัวแทน':'ชวนเพื่อนรับค่าคอม'}</span></button></div>
+</main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
+
 shop:()=>`${top('ร้านค้า SKINSIP')}<main><p class="small">ราคาในต้นแบบเป็นราคาตัวอย่าง แอดมินกำหนดจริงในหลังบ้าน</p>${plist()}${cartN()?`<button class="btn" data-go="cart">ไปที่ตะกร้า (${cartN()}) · ${baht(cartSum())}</button>`:''}</main>`,
 product:()=>{const p=P.find(x=>x.id===S.sel);return `${top(p.short,S.back||'shop')}<main><div class="big">${art(p,150)}</div><h2>${p.name}</h2><p class="price" style="font-size:24px">${baht(p.price)}</p><p>${p.desc}</p><p class="mute">วิธีใช้: ${p.use}</p>${p.id==='duo'?'<span class="tag">คุ้มกว่าซื้อแยก '+baht(P[0].price+P[1].price-p.price)+'</span>':''}<button class="btn" data-add="${p.id}">ใส่ตะกร้า</button><button class="btn ghost" data-tab="consult">ไม่แน่ใจ? ถามบอทก่อน</button></main>`},
 cart:()=>{const it=Object.entries(S.cart);return `${top('ตะกร้า','shop')}<main>${it.length?it.map(([k,q])=>{const p=P.find(x=>x.id===k);return `<div class="row" style="align-items:center"><div style="flex:1"><b style="white-space:normal">${p.short}</b><div class="small">${baht(p.price)}</div></div><div class="qty"><button data-q="${k}" data-d="-1" aria-label="ลด">−</button><span>${q}</span><button data-q="${k}" data-d="1" aria-label="เพิ่ม">+</button></div></div>`}).join('')+`<div class="row"><span>รวม</span><b>${baht(cartSum())}</b></div><button class="btn" data-go="checkout">ชำระเงิน</button>`:'<p class="mute">ตะกร้าว่าง</p><button class="btn" data-tab="shop">เลือกสินค้า</button>'}</main>`},
@@ -332,21 +370,20 @@ const render=()=>{
  initSlider();
 };
 let sTimer=null;
-const initSlider=()=>{clearInterval(sTimer);const tr=$('track');if(!tr)return;
- const dots=[...document.querySelectorAll('.dot')];const cur=()=>Math.round(tr.scrollLeft/tr.clientWidth);
- tr.addEventListener('scroll',()=>{const c=cur();dots.forEach((d,i)=>d.classList.toggle('on',i===c))},{passive:true});
- const to=i=>tr.scrollTo({left:i*(tr.clientWidth+10),behavior:'smooth'});
- tr._to=to;
- tr.tabIndex=0;tr.addEventListener('keydown',e=>{if(e.key==='ArrowRight')to(Math.min(cur()+1,SLIDES.length-1));if(e.key==='ArrowLeft')to(Math.max(cur()-1,0))});
- if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let hold=false;tr.addEventListener('pointerdown',()=>hold=true);sTimer=setInterval(()=>{if(hold||!document.body.contains(tr))return;to((cur()+1)%SLIDES.length)},5000)}
-};
+const initSlider=()=>{clearInterval(sTimer)};
+const lbOpen=n=>{let lb=$('lb');if(!lb){document.body.insertAdjacentHTML('beforeend',lbHtml());lb=$('lb')}lb.hidden=false;const tr=$('lbtrack');requestAnimationFrame(()=>{tr.scrollLeft=n*tr.clientWidth});lb.querySelector('.lbx').focus()};
+const lbClose=()=>{const lb=$('lb');if(lb)lb.hidden=true};
+const lbNav=d=>{const tr=$('lbtrack');const c=Math.round(tr.scrollLeft/tr.clientWidth);tr.scrollTo({left:Math.max(0,Math.min(SLIDES.length-1,c+d))*tr.clientWidth,behavior:'smooth'})};
 const closeSheet=()=>{$('sheet').hidden=true};
 const go=v=>{S.view=v;if(MAIN.includes(v))S.tab=v;render()};
 
 document.addEventListener('click',e=>{
  if(e.target.id==='sheet')return closeSheet();
  const ro=e.target.closest('[data-reorder]');if(ro){const o=S.orders[+ro.dataset.reorder];if(o){S.cart={...o.lines};toast('ใส่ชุดเดิมลงตะกร้าแล้ว');go('cart')}return}
- const dt=e.target.closest('[data-dot]');if(dt){const tr=$('track');tr&&tr._to(+dt.dataset.dot);return}
+ const sy=e.target.closest('[data-story]');if(sy)return lbOpen(+sy.dataset.story);
+ const ln=e.target.closest('[data-lbnav]');if(ln)return lbNav(+ln.dataset.lbnav);
+ if(e.target.closest('[data-lbclose]'))lbClose();
+ if(e.target.id==='lb'||e.target.classList.contains('lbs'))return lbClose();
  const t=e.target.closest('[data-tab],[data-go],[data-act],[data-add],[data-p],[data-q],[data-bot],[data-f]');if(!t)return;
  const d=t.dataset;
  if(d.add){e.stopPropagation();S.cart[d.add]=(S.cart[d.add]||0)+1;toast('ใส่ตะกร้าแล้ว');if(d.buy){go('cart')}else render();return}
@@ -373,7 +410,7 @@ document.addEventListener('click',e=>{
  if(a==='sAdmin'){closeSheet();S.view='consult';S.tab='consult';if(!S.chat.length)render();S.chat.forEach(m=>m.last=false);S.chat.push({me:true,t:'คุยกับแอดมิน'});return bot('admin')}
  if(a==='sBot'){closeSheet();return go('consult')}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.p){S.sel=e.target.dataset.p;S.back=S.view;S.view='product';render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();lbClose()}if($('lb')&&!$('lb').hidden){if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1)}if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.p){S.sel=e.target.dataset.p;S.back=S.view;S.view='product';render()}});
 document.addEventListener('input',e=>{const m=/^o(\d)$/.exec(e.target.id);if(m&&e.target.value&&+m[1]<5)$('o'+(+m[1]+1)).focus()});
 document.addEventListener('submit',e=>{e.preventDefault();const id=e.target.id;
  if(id==='fSign'){S.user={name:$('nm').value.trim(),phone:$('ph').value.trim()};return go('otp')}
