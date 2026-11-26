@@ -209,6 +209,16 @@ button.st{cursor:pointer}
 .lbn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:var(--ink);font-size:24px;cursor:pointer}
 .lbn.p{left:10px}.lbn.n{right:10px}
 @media(max-width:520px){.lbn{display:none}}
+
+/* ---- navy tab bar ---- */
+.nav{background:linear-gradient(180deg,#14307a,#0b1f4f);backdrop-filter:none;border-top:0;box-shadow:0 -6px 20px rgba(11,31,79,.18)}
+.nav button,:root[data-theme=dark] .nav button{color:rgba(255,255,255,.62);position:relative}
+.nav button.on,:root[data-theme=dark] .nav button.on{color:#fff}
+.nav button.on::before{content:"";position:absolute;top:0;left:50%;width:28px;height:3px;border-radius:0 0 4px 4px;background:#8cc2fb;transform:translateX(-50%)}
+.nav button.on svg{color:#8cc2fb}
+.nav button:focus-visible{outline:2px solid #8cc2fb;outline-offset:-4px}
+.badge{background:#5aa9f5}
+.fab{background:linear-gradient(135deg,#6db4f7,#3f8fea);box-shadow:0 8px 22px rgba(63,143,234,.4)}
 </style>
 </head>
 <body>
