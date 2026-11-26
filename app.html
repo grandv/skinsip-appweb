@@ -226,6 +226,16 @@ button.st{cursor:pointer}
 .sarr{position:absolute;top:calc(50% - 22px);width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--co);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 4px 12px rgba(31,63,154,.15);display:none}
 .sarr.l{left:-6px}.sarr.r{right:-6px}
 @media(hover:hover) and (pointer:fine){.sarr{display:block}}
+
+/* ---- app shell: fixed height, content scrolls, tab bar always visible ---- */
+html,body{height:100%}
+.app{height:100vh;height:100dvh;min-height:0}
+@media(min-width:700px){.app{height:calc(100vh - 48px);height:calc(100dvh - 48px);min-height:0;max-height:920px}}
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:24px}
+main.home{padding-bottom:90px}
+.top,.nav{flex:none}
+.nav{position:static}
+.fab{position:absolute;right:16px;bottom:78px;margin:0}
 </style>
 </head>
 <body>
