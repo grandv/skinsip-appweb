@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKINSIP Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: an owner's sales desk, dense and calm
+   IDEA the brand's pharmacy label carried into a back-office ledger: cobalt rules, white sheets, coral for what needs action
+   PICTURE the 60-day sales mass climbing across the full width, today's figure at its summit
+   COLOUR white ground, cobalt #2340d8 marks, mint #0f7a63 for money in, coral #ff5a4e for action
+   TYPE Prompt 700 headings + IBM Plex Sans Thai text, tabular figures in tables
+   LAYOUT laptop: KPI row, wide chart, then two columns; phone: stacked, tables scroll */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0b0f24);--panel:light-dark(#f5f6fb,#141a36);--ink:light-dark(#10163a,#eef1ff);--mute:light-dark(#5a6283,#a3abcf);--line:light-dark(#e2e5f0,#273055);--co:light-dark(#2340d8,#7d93ff);--mint:light-dark(#0f7a63,#4fd1b1);--coral:#ff5a4e;--tint:light-dark(#e8ecff,#1d2756)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3{font-family:Prompt,"IBM Plex Sans Thai",sans-serif;margin:0;line-height:1.1;letter-spacing:-.01em}
+h1{font-size:clamp(26px,3.4vw,38px)}h2{font-size:19px;margin-bottom:10px}
+header{position:sticky;top:0;z-index:10;background:var(--co);color:#fff}
+:root[data-theme=dark] header{background:#1a2a99}
+.hd{max-width:1240px;margin:0 auto;padding:10px max(16px,3vw);display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.logo{font-family:Prompt;font-weight:700;font-size:20px;letter-spacing:.02em}
+.logo small{font-family:"IBM Plex Sans Thai";font-weight:500;font-size:13px;opacity:.8;margin-left:6px;letter-spacing:0}
+nav{display:flex;gap:4px;overflow-x:auto;flex:1}
+nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:10px;white-space:nowrap;font-size:14px;opacity:.85}
+nav a.on{background:rgba(255,255,255,.18);opacity:1;font-weight:600}
+nav a:focus-visible{outline:2px solid #fff}
+.wrap{max-width:1240px;margin:0 auto;padding:22px max(16px,3vw) 60px}
+.sample{font-size:13px;color:var(--mute);margin:6px 0 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10.5em,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:16px 0 22px}
+.kpi{background:var(--bg);padding:14px 16px}
+.kpi .l{font-size:13px;color:var(--mute)}
+.kpi .v{font-family:Prompt;font-weight:700;font-size:clamp(22px,2.6vw,30px);white-space:nowrap}
+.kpi .c{font-size:13px;white-space:nowrap}.up{color:var(--mint)}.dn{color:var(--coral)}
+.fig{position:relative;min-height:300px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font:13px "IBM Plex Sans Thai",sans-serif;fill:var(--mute);paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;margin-top:26px}
+@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{border-top:2px solid var(--ink);padding-top:12px}
+.bar{display:grid;grid-template-columns:9.5em minmax(0,1fr) 6.5em;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.bar .t{height:14px;background:var(--tint);border-radius:4px;overflow:hidden}.bar .t i{display:block;height:100%;background:var(--co)}
+.bar b{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.split{display:flex;height:30px;border-radius:8px;overflow:hidden;margin:6px 0}.split i{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute)}.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;background:var(--c)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.tools input,.tools select{min-height:42px;border:1px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--bg);font-size:16px}
+.tools input{flex:1 1 220px}
+.btn{min-height:42px;border:0;border-radius:10px;padding:0 16px;background:var(--co);color:#fff;font-weight:600;cursor:pointer;white-space:nowrap}
+:root[data-theme=dark] .btn{color:#0b0f24}
+.btn.g{background:var(--tint);color:var(--co)}.btn.r{background:var(--coral);color:#fff}
+.btn:focus-visible,input:focus-visible,select:focus-visible,tr[tabindex]:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--mute);padding:10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr[tabindex]{cursor:pointer}tbody tr[tabindex]:hover{background:var(--panel)}
+.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--tint);white-space:nowrap}
+.pill.ok{background:light-dark(#dff4ec,#143a33);color:var(--mint)}.pill.warn{background:light-dark(#ffe6e3,#3d1a17);color:var(--coral)}
+.more{margin:12px auto 0;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:14px}
+.card{background:var(--panel);border-radius:14px;padding:16px}
+.card .v{font-family:Prompt;font-weight:700;font-size:34px}
+.meter{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0}.meter i{display:block;height:100%;background:var(--mint)}
+.alert{border-left:4px solid var(--coral);background:var(--panel);padding:10px 14px;border-radius:0 10px 10px 0;margin:10px 0;font-size:14px}
+dialog{border:0;border-radius:18px;padding:0;max-width:560px;width:calc(100% - 32px);background:var(--bg);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(10,14,36,.5)}
+.dlg{padding:20px}.dlg .row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
+.dlg .row b{white-space:nowrap}
+.appwrap{display:grid;grid-template-columns:400px minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:860px){.appwrap{grid-template-columns:minmax(0,1fr)}}
+.phone{width:100%;max-width:400px;height:800px;border:10px solid #10163a;border-radius:42px;overflow:hidden;background:#fff;margin:0 auto}
+.phone iframe{width:100%;height:100%;border:0;display:block}
+.feed{font-size:14px}.feed div{padding:8px 0;border-bottom:1px solid var(--line)}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;font-size:14px;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;z-index:50;max-width:320px}
+.toast.show{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+[hidden]{display:none!important}
+@media(max-width:600px){.bar{grid-template-columns:7em minmax(0,1fr) 5.5em}.phone{height:720px}}
+</style>
+</head>
+<body>
+<header><div class="hd"><div class="logo">SKINSIP<small>หลังบ้าน</small></div>
+<nav id="nav"><a href="#overview">ภาพรวม</a><a href="#orders">ออเดอร์</a><a href="#customers">ลูกค้า</a><a href="#stock">สต็อก</a><a href="#affiliates">ตัวแทนและค่าคอม</a><a href="#app">ทดลองแอป</a></nav></div></header>
+
+<div class="wrap">
+<section id="v-overview">
+ <h1 id="headline">ยอดขาย 30 วัน</h1>
+ <p class="sample">ข้อมูลทดสอบทั้งหมด (ลูกค้า ราคา ต้นทุน ตัวแทน) สร้างขึ้นเพื่อทดลองระบบ ยังไม่ใช่ยอดจริง · รีเฟรชหน้าแล้วข้อมูลจะเริ่มใหม่</p>
+ <div class="kpis" id="kpis"></div>
+ <div class="panel"><h2>ยอดขายรายวัน 60 วันล่าสุด (บาท)</h2><div class="fig" id="figSales"><svg id="svgSales" role="img" aria-label="กราฟยอดขายรายวัน"></svg></div></div>
+ <div class="grid2">
+  <div class="panel"><h2>ยอดขายตามสินค้า (30 วัน)</h2><div id="byProd"></div>
+   <h2 style="margin-top:22px">ช่องทางขาย (30 วัน)</h2><div id="channel"></div></div>
+  <div class="panel"><h2>ตัวแทนขายดี (30 วัน)</h2><div id="topAff"></div>
+   <h2 style="margin-top:22px">เงินเหลือต่อออเดอร์เฉลี่ย</h2><div id="unit"></div></div>
+ </div>
+</section>
+
+<section id="v-orders" hidden>
+ <h1>ออเดอร์และรายการชำระเงิน</h1>
+ <div class="tools"><input id="qO" type="search" placeholder="ค้นหาเลขออเดอร์ ชื่อ เบอร์ หรือโค้ดตัวแทน" aria-label="ค้นหาออเดอร์">
+  <select id="fO" aria-label="กรองสถานะ"><option value="">ทุกสถานะ</option><option>รอจัดส่ง</option><option>จัดส่งแล้ว</option><option>ส่งสำเร็จ</option><option>คืนสินค้า</option></select>
+  <button class="btn g" data-csv="orders">ดาวน์โหลด CSV</button><button class="btn g" data-copy="orders">คัดลอก CSV</button></div>
+ <div class="scroll"><table><thead><tr><th>เลขออเดอร์</th><th>วันที่</th><th>ลูกค้า</th><th>สินค้า</th><th class="n">ยอด</th><th>ชำระ</th><th>ผู้แนะนำ</th><th class="n">ค่าคอม</th><th>สถานะ</th></tr></thead><tbody id="tO"></tbody></table></div>
+ <button class="btn g more" id="moreO">แสดงเพิ่ม</button>
+</section>
+
+<section id="v-customers" hidden>
+ <h1>ลูกค้า</h1>
+ <p class="sample">ชื่อ เบอร์ และที่อยู่ เห็นได้เฉพาะแอดมินที่มีสิทธิ์ · ไฟล์ส่งออกสำหรับวิเคราะห์ไม่มีข้อมูลส่วนตัว</p>
+ <div class="kpis" id="cKpis"></div>
+ <div class="tools"><input id="qC" type="search" placeholder="ค้นหาชื่อ เบอร์ หรือจังหวัด" aria-label="ค้นหาลูกค้า">
+  <select id="fC" aria-label="กรองกลุ่มลูกค้า"><option value="">ทุกกลุ่ม</option><option>ใกล้หมด ควรเตือนซื้อซ้ำ</option><option>ซื้อซ้ำ</option><option>ซื้อครั้งแรก</option></select>
+  <button class="btn" id="remind">ส่งเตือนสั่งซ้ำทาง LINE</button><button class="btn g" data-csv="analysis">CSV สำหรับวิเคราะห์</button><button class="btn g" data-copy="analysis">คัดลอก</button></div>
+ <div class="scroll"><table><thead><tr><th>ลูกค้า</th><th>เบอร์</th><th>จังหวัด</th><th class="n">ออเดอร์</th><th class="n">ยอดซื้อรวม</th><th class="n">แต้ม</th><th>ซื้อล่าสุด</th><th>กลุ่ม</th></tr></thead><tbody id="tC"></tbody></table></div>
+ <button class="btn g more" id="moreC">แสดงเพิ่ม</button>
+</section>
+
+<section id="v-stock" hidden>
+ <h1>สต็อกสินค้า</h1>
+ <p class="sample">เจลและมูสใช้สต็อกร่วมกับเซ็ต Duo · เซ็ตพร้อมขาย = จำนวนที่น้อยกว่าระหว่างเจลกับมูส</p>
+ <div id="stockAlert"></div><div class="cards" id="stockCards"></div>
+ <div class="panel" style="margin-top:24px"><h2>รับสินค้าเข้าคลัง</h2><form class="tools" id="fStock"><select id="sItem" aria-label="สินค้า"><option value="gel">เจล</option><option value="mousse">มูส</option></select><input id="sQty" type="number" min="1" value="100" style="flex:0 1 140px" aria-label="จำนวน"><button class="btn" type="submit">บันทึกรับเข้า</button></form>
+ <div class="feed" id="stockLog"></div></div>
+</section>
+
+<section id="v-affiliates" hidden>
+ <h1>ตัวแทนและค่าคอม</h1>
+ <div class="tools"><label for="rate">เรตคอมต่อชิ้น (บาท)</label><input id="rate" type="number" min="0" value="40" style="flex:0 1 110px"><span class="sample" style="margin:0">ตามบรีฟ 40 บาท · เปลี่ยนเพื่อดูผลต่อกำไรได้ทันที</span></div>
+ <div class="kpis" id="aKpis"></div>
+ <div class="tools"><button class="btn" id="closeCycle">ปิดรอบจ่าย (รวมรายการพร้อมจ่าย)</button><button class="btn g" id="markPaid">บันทึกโอนแล้ว</button><button class="btn g" data-csv="payout">CSV รอบจ่าย</button></div>
+ <div class="scroll"><table><thead><tr><th>โค้ด</th><th>ชื่อ</th><th>ช่องทาง</th><th>สถานะ</th><th class="n">ออเดอร์</th><th class="n">ชิ้น</th><th class="n">ยอดขาย</th><th class="n">รอยืนยัน</th><th class="n">พร้อมจ่าย</th><th class="n">ปิดรอบแล้ว</th><th class="n">จ่ายแล้ว</th><th></th></tr></thead><tbody id="tA"></tbody></table></div>
+</section>
+
+<section id="v-app" hidden>
+ <h1>ทดลองใช้แอปลูกค้า</h1>
+ <p class="sample">กดใช้งานได้เหมือนจริง สั่งซื้อในแอปแล้วออเดอร์จะเข้าหลังบ้านทันที · ลองใส่โค้ด SK001 ตอนชำระเงิน</p>
+ <div class="appwrap"><div class="phone"><iframe id="appFrame" src="app.html" title="แอปลูกค้า SKINSIP"></iframe></div>
+  <div><div class="panel"><h2>สิ่งที่เกิดขึ้นในหลังบ้าน</h2><div class="feed" id="feed"><div class="sample" style="margin:0">ยังไม่มีรายการจากแอป</div></div></div>
+  <div class="panel" style="margin-top:22px"><h2>ลองทำ</h2><ol style="padding-left:20px;margin:0"><li>สั่งซื้อในแอปโดยใส่โค้ด SK001 แล้วดูออเดอร์ที่แท็บออเดอร์</li><li>เปิดออเดอร์นั้นในหลังบ้าน แล้วกด "จัดส่งแล้ว" แอปจะเด้งแจ้งเตือน</li><li>สมัครตัวแทนในแอป แล้วดูชื่อในแท็บตัวแทน</li><li>กดปุ่มแชทในหน้าหลักของแอป เพื่อดูช่องทางติดต่อ</li></ol></div></div></div>
+</section>
+</div>
+
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+const P={gel:{n:'Barrier Repair Gel',s:'เจล',price:490,cost:95,pcs:1,use:{gel:1}},mousse:{n:'Comfort Cleansing Mousse',s:'มูส',price:390,cost:85,pcs:1,use:{mousse:1}},duo:{n:'Barrier Duo',s:'Duo',price:790,cost:180,pcs:2,use:{gel:1,mousse:1}}};
+const FEE=0.025,SHIP=45,RETURN_DAYS=7;
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const B=n=>'฿'+Math.round(n).toLocaleString('th-TH');
+const N=n=>Math.round(n).toLocaleString('th-TH');
+const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2600)};
+const DAY=864e5;const today=new Date();today.setHours(12,0,0,0);
+const dstr=d=>new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+let seed=20261126;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;const pick=a=>a[Math.floor(rnd()*a.length)];
+
+/* ---------- sample data ---------- */
+const FN=['ณัฐชา','พิมพ์ลดา','กมลชนก','ธนพร','ศิริพร','อรอุมา','ปวีณา','ชนิดา','สุภาวดี','วรรณิดา','จิราพร','มณีรัตน์','ภัทรา','สิริกร','นภัสสร','อาทิตยา','กัญญา','ธีรวัฒน์','ภูมิ','ณัฐวุฒิ'];
+const LN=['ก.','ส.','ว.','ท.','ม.','จ.','พ.','ร.','ช.','น.'];
+const PV=['กรุงเทพฯ','กรุงเทพฯ','กรุงเทพฯ','นนทบุรี','ปทุมธานี','สมุทรปราการ','ชลบุรี','เชียงใหม่','ขอนแก่น','ภูเก็ต','นครปฐม','สงขลา'];
+const AFF=[['SK001','ครีเอเตอร์ A','TikTok'],['SK002','ครีเอเตอร์ B','TikTok'],['SK003','เพจรีวิว C','Facebook'],['SK004','ครีเอเตอร์ D','Instagram'],['SK005','ร้านค้า E','LINE / เพื่อนและครอบครัว'],['SK006','ครีเอเตอร์ F','TikTok'],['SK007','เพจ G','Facebook'],['SK008','ครีเอเตอร์ H','TikTok']].map(([code,name,ch])=>({code,name,ch,status:'อนุมัติแล้ว'}));
+const AW=[.24,.18,.14,.1,.1,.09,.08,.07];
+const pending=[{code:'—',name:'ผู้สมัคร I',ch:'TikTok',status:'รออนุมัติ'},{code:'—',name:'ผู้สมัคร J',ch:'Instagram',status:'รออนุมัติ'}];
+const D={customers:[],orders:[],stock:{gel:900,mousse:800},stockLog:[],aff:[...AFF,...pending],cycle:0};
+for(let i=0;i<420;i++)D.customers.push({id:'C'+String(1001+i),name:pick(FN)+' '+pick(LN),phone:'08'+Math.floor(rnd()*10)+'-'+String(Math.floor(rnd()*900)+100)+'-'+String(Math.floor(rnd()*9000)+1000),prov:pick(PV),member:rnd()<.7});
+let no=10001;const buyers=[];
+for(let d=59;d>=0;d--){const date=today.getTime()-d*DAY;const base=1+(59-d)/59*5;const n=Math.max(0,Math.round(base+(rnd()-.5)*3+(new Date(date).getDay()%6===0?1.5:0)));
+ for(let k=0;k<n;k++){const c=buyers.length&&rnd()<.28?pick(buyers):D.customers[Math.floor(rnd()*D.customers.length)];buyers.push(c);
+  const r=rnd();const id=r<.45?'duo':r<.8?'gel':'mousse';const q=rnd()<.1?2:1;
+  const ar=rnd();let ref='';if(ar<.55){let a=rnd(),s=0;for(let j=0;j<AW.length;j++){s+=AW[j];if(a<s){ref=AFF[j].code;break}}}
+  const age=d;let status=age>9?'ส่งสำเร็จ':age>2?'จัดส่งแล้ว':'รอจัดส่ง';if(age>9&&rnd()<.04)status='คืนสินค้า';
+  D.orders.push({no:'SKS'+(no++),date:date+Math.floor(rnd()*10)*36e5,cid:c.id,lines:{[id]:q},total:P[id].price*q,disc:0,pm:rnd()<.7?'PromptPay':'บัตร',ref,status,tracking:status!=='รอจัดส่ง'?'TH'+Math.floor(rnd()*1e9):'',paid:d>35&&ref?'จ่ายแล้ว':''});
+ }}
+D.orders.sort((a,b)=>b.date-a.date);
+const used=o=>{const u={gel:0,mousse:0};for(const[k,q]of Object.entries(o.lines))for(const[s,m]of Object.entries(P[k].use))u[s]+=m*q;return u};
+for(const o of D.orders)if(o.status!=='คืนสินค้า'){const u=used(o);D.stock.gel-=u.gel;D.stock.mousse-=u.mousse}
+D.stockLog.push({t:today.getTime()-60*DAY,m:'ยอดเริ่มต้น: เจล 900 · มูส 800 (ข้อมูลทดสอบ)'});
+
+/* ---------- derived ---------- */
+const rate=()=>Math.max(0,+$('rate').value||0);
+const pcs=o=>Object.entries(o.lines).reduce((a,[k,q])=>a+P[k].pcs*q,0);
+const items=o=>Object.entries(o.lines).map(([k,q])=>P[k].s+(q>1?' ×'+q:'')).join(', ');
+const cust=id=>D.customers.find(c=>c.id===id)||{name:'—',phone:'',prov:''};
+const comm=o=>o.ref&&o.status!=='คืนสินค้า'?pcs(o)*rate():0;
+const cstat=o=>{if(!o.ref)return'';if(o.status==='คืนสินค้า')return'ยกเลิก';if(o.paid)return o.paid;return o.status==='ส่งสำเร็จ'&&today-o.date>RETURN_DAYS*DAY?'พร้อมจ่าย':'รอยืนยัน'};
+const cost=o=>Object.entries(o.lines).reduce((a,[k,q])=>a+P[k].cost*q,0);
+const profit=o=>o.status==='คืนสินค้า'?-SHIP:o.total-cost(o)-o.total*FEE-SHIP-comm(o);
+const inRange=(o,a,b)=>today-o.date>=a*DAY&&today-o.date<b*DAY;
+const ok=o=>o.status!=='คืนสินค้า';
+
+/* ---------- overview ---------- */
+const drawSales=()=>{const s=$('svgSales');const W=s.clientWidth,H=s.clientHeight;if(!W)return;
+ const days=[...Array(60)].map((_,i)=>{const a=59-i;return {d:today.getTime()-a*DAY,v:D.orders.filter(o=>ok(o)&&Math.floor((today-o.date)/DAY)===a).reduce((x,o)=>x+o.total,0)}});
+ const m={l:52,r:W<520?16:70,t:20,b:30};const mx=Math.max(...days.map(d=>d.v))*1.15||1;const step=mx>8000?2000:mx>4000?1000:500;const top=Math.ceil(mx/step)*step;
+ const x=i=>m.l+i*(W-m.l-m.r)/59,y=v=>H-m.b-v/top*(H-m.t-m.b);
+ const avg=days.map((_,i)=>{const w=days.slice(Math.max(0,i-6),i+1);return w.reduce((a,b)=>a+b.v,0)/w.length});
+ let g='';for(let v=0;v<=top;v+=step)g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${m.l-8}" y="${y(v)+4}" text-anchor="end">${v>=1000?v/1000+'k':v}</text>`;
+ const bw=Math.max(2,(W-m.l-m.r)/60-2);
+ const bars=days.map((d,i)=>`<rect x="${x(i)-bw/2}" y="${y(d.v)}" width="${bw}" height="${H-m.b-y(d.v)}" fill="var(--co)" opacity=".28" rx="1"/>`).join('');
+ const line='M'+avg.map((v,i)=>x(i)+' '+y(v)).join('L');
+ const area=line+`L${x(59)} ${H-m.b}L${x(0)} ${H-m.b}Z`;
+ const ticks=[0,15,30,45,59].filter((_,i)=>W>=520||i%2===0).map(i=>`<text x="${x(i)}" y="${H-8}" text-anchor="${i===0?'start':i===59?'end':'middle'}">${dstr(days[i].d)}</text>`).join('');
+ const last=avg[59];
+ s.innerHTML=`<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--co)" stop-opacity=".35"/><stop offset="1" stop-color="var(--co)" stop-opacity="0"/></linearGradient></defs>${g}${bars}<path d="${area}" fill="url(#ga)"/><path d="${line}" fill="none" stroke="var(--co)" stroke-width="3"/><circle cx="${x(59)}" cy="${y(last)}" r="5" fill="var(--coral)"/>${W>=520?`<text x="${x(59)+8}" y="${y(last)+4}" style="fill:var(--ink);font-weight:600">${B(last)}/วัน</text>`:''}${ticks}<text x="${m.l}" y="${m.t-6}">เส้น = ค่าเฉลี่ย 7 วัน · แท่ง = รายวัน</text>`};
+const roS=new ResizeObserver(drawSales);roS.observe($('svgSales'));
+const overview=()=>{
+ const a=D.orders.filter(o=>inRange(o,0,30)),b=D.orders.filter(o=>inRange(o,30,60));
+ const sum=x=>x.filter(ok).reduce((s,o)=>s+o.total,0);const s1=sum(a),s0=sum(b);
+ const ch=(x,y)=>y?((x-y)/y*100):0;const aov=s1/(a.filter(ok).length||1),aov0=s0/(b.filter(ok).length||1);
+ const cnt={};for(const o of D.orders.filter(ok))cnt[o.cid]=(cnt[o.cid]||0)+1;const buyers=Object.keys(cnt).length;const rep=Object.values(cnt).filter(v=>v>1).length;
+ const due=D.orders.filter(o=>['รอยืนยัน','พร้อมจ่าย','ปิดรอบแล้ว'].includes(cstat(o))).reduce((s,o)=>s+comm(o),0);
+ const pr=a.filter(ok).reduce((s,o)=>s+profit(o),0);
+ $('headline').textContent=`ยอดขาย 30 วัน ${B(s1)} ${s1>=s0?'โต':'ลด'} ${Math.abs(ch(s1,s0)).toFixed(0)}% จาก 30 วันก่อน`;
+ const K=[['ยอดขาย 30 วัน',B(s1),ch(s1,s0)],['ออเดอร์',N(a.filter(ok).length),ch(a.filter(ok).length,b.filter(ok).length)],['ยอดต่อออเดอร์',B(aov),ch(aov,aov0)],['เงินเหลือหลังหักทุกต้นทุน',B(pr),null],['ลูกค้าซื้อซ้ำ',(rep/buyers*100).toFixed(0)+'%',null,`${rep} จาก ${buyers} คน`],['ค่าคอมค้างจ่าย',B(due),null,'รวมรอยืนยัน']];
+ $('kpis').innerHTML=K.map(([l,v,c,n])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="c ${c==null?'':c>=0?'up':'dn'}">${c==null?esc(n||''):(c>=0?'▲ ':'▼ ')+Math.abs(c).toFixed(0)+'% จาก 30 วันก่อน'}</div></div>`).join('');
+ const bp=Object.keys(P).map(k=>({k,v:a.filter(ok).reduce((s,o)=>s+(o.lines[k]||0)*P[k].price,0),q:a.filter(ok).reduce((s,o)=>s+(o.lines[k]||0),0)})).sort((x,y)=>y.v-x.v);const mp=bp[0].v||1;
+ $('byProd').innerHTML=bp.map(r=>`<div class="bar"><span>${P[r.k].n}<br><small style="color:var(--mute)">${N(r.q)} ชิ้น</small></span><div class="t"><i style="width:${r.v/mp*100}%"></i></div><b>${B(r.v)}</b></div>`).join('');
+ const af=a.filter(o=>ok(o)&&o.ref).reduce((s,o)=>s+o.total,0);const pa=s1?af/s1*100:0;
+ $('channel').innerHTML=`<div class="split"><i style="width:${pa}%;background:var(--co)"></i><i style="width:${100-pa}%;background:var(--mint)"></i></div><div class="legend"><span style="--c:var(--co)">ผ่านตัวแทน ${pa.toFixed(0)}% · ${B(af)}</span><span style="--c:var(--mint)">ขายตรง ${(100-pa).toFixed(0)}% · ${B(s1-af)}</span></div>`;
+ const ta=AFF.map(x=>({...x,v:a.filter(o=>ok(o)&&o.ref===x.code).reduce((s,o)=>s+o.total,0)})).sort((x,y)=>y.v-x.v).slice(0,6);const mt=ta[0].v||1;
+ $('topAff').innerHTML=ta.map(r=>`<div class="bar"><span>${r.code} · ${esc(r.name)}</span><div class="t"><i style="width:${r.v/mt*100}%;background:var(--mint)"></i></div><b>${B(r.v)}</b></div>`).join('');
+ const ok30=a.filter(ok),n=ok30.length||1;const avgT=s1/n,avgC=ok30.reduce((s,o)=>s+cost(o),0)/n,avgF=avgT*FEE,avgK=ok30.reduce((s,o)=>s+comm(o),0)/n,net=avgT-avgC-avgF-SHIP-avgK;
+ $('unit').innerHTML=[['ยอดขาย',avgT,'var(--co)'],['ต้นทุนสินค้า',-avgC],['ค่ารับชำระ 2.5%',-avgF],['ค่าส่งที่ร้านออก',-SHIP],['ค่าคอม',-avgK],['เหลือ',net,'var(--mint)']].map(([l,v,c])=>`<div class="bar"><span>${l}</span><div class="t"><i style="width:${Math.abs(v)/avgT*100}%;background:${c||'var(--coral)'}"></i></div><b>${v<0?'−':''}${B(Math.abs(v))}</b></div>`).join('')+`<p class="sample">ต้นทุน ค่าส่ง และค่าธรรมเนียมเป็นตัวเลขสมมติ แก้ได้เมื่อมีตัวเลขจริง</p>`;
+ drawSales()};
+
+/* ---------- orders ---------- */
+let limO=25;
+const pillS=s=>`<span class="pill ${s==='ส่งสำเร็จ'||s==='จ่ายแล้ว'||s==='พร้อมจ่าย'?'ok':s==='คืนสินค้า'||s==='รอจัดส่ง'||s==='ยกเลิก'?'warn':''}">${esc(s)}</span>`;
+const fOrders=()=>{const q=$('qO').value.trim().toLowerCase(),f=$('fO').value;return D.orders.filter(o=>{const c=cust(o.cid);return(!f||o.status===f)&&(!q||[o.no,c.name,c.phone,o.ref].join(' ').toLowerCase().includes(q))})};
+const orders=()=>{const L=fOrders();$('tO').innerHTML=L.slice(0,limO).map(o=>{const c=cust(o.cid);return `<tr tabindex="0" data-o="${o.no}"><td><b>${o.no}</b>${o.app?' <span class="pill">จากแอป</span>':''}</td><td style="white-space:nowrap">${dstr(o.date)}</td><td>${esc(c.name)}</td><td>${items(o)}</td><td class="n">${B(o.total)}</td><td>${o.pm}</td><td>${o.ref||'ขายตรง'}</td><td class="n">${o.ref?B(comm(o)):'—'}</td><td>${pillS(o.status)}</td></tr>`}).join('')||'<tr><td colspan="9">ไม่พบออเดอร์</td></tr>';$('moreO').hidden=L.length<=limO};
+const openOrder=n=>{const o=D.orders.find(x=>x.no===n);if(!o)return;const c=cust(o.cid);
+ $('dlgBody').innerHTML=`<h2>${o.no}</h2><p class="sample" style="margin:0 0 10px">${new Date(o.date).toLocaleString('th-TH')} · ${o.pm}</p>
+ <div class="row"><span>ลูกค้า</span><b>${esc(c.name)}</b></div><div class="row"><span>เบอร์</span><b>${esc(c.phone)}</b></div><div class="row"><span>ที่อยู่ / จังหวัด</span><b style="white-space:normal;text-align:right">${esc(c.address||c.prov)}</b></div>
+ ${Object.entries(o.lines).map(([k,q])=>`<div class="row"><span>${P[k].n} ×${q}</span><b>${B(P[k].price*q)}</b></div>`).join('')}
+ ${o.disc?`<div class="row"><span>ส่วนลดแต้ม</span><b>−${B(o.disc)}</b></div>`:''}<div class="row"><span>ยอดชำระ</span><b>${B(o.total)}</b></div>
+ <div class="row"><span>ผู้แนะนำ / ค่าคอม</span><b>${o.ref?o.ref+' · '+B(comm(o))+' · '+cstat(o):'ขายตรง'}</b></div><div class="row"><span>เงินเหลือหลังหักต้นทุน</span><b>${B(profit(o))}</b></div>
+ <div class="row"><span>สถานะ</span><b>${pillS(o.status)}${o.tracking?' · '+esc(o.tracking):''}</b></div>
+ <div class="tools" style="margin-top:16px">${o.status==='รอจัดส่ง'?`<button class="btn" data-ship="${o.no}">จัดส่งแล้ว</button>`:''}${o.status==='จัดส่งแล้ว'?`<button class="btn" data-done="${o.no}">ส่งสำเร็จ</button>`:''}${o.status!=='คืนสินค้า'&&!o.paid?`<button class="btn r" data-ret="${o.no}">คืนสินค้า</button>`:''}<button class="btn g" data-close>ปิด</button></div>`;
+ $('dlg').showModal()};
+const tellApp=(o,status)=>{if(!o.app)return;try{$('appFrame').contentWindow.postMessage({type:'skinsip-status',no:o.no,status,tracking:o.tracking},'*')}catch(e){}};
+
+/* ---------- customers ---------- */
+let limC=25;
+const custRows=()=>D.customers.map(c=>{const os=D.orders.filter(o=>o.cid===c.id&&ok(o));const last=os.length?Math.max(...os.map(o=>o.date)):0;const ld=last?Math.floor((today-last)/DAY):null;
+ const spend=os.reduce((s,o)=>s+o.total,0);const seg=!os.length?'':ld>=25&&ld<=45?'ใกล้หมด ควรเตือนซื้อซ้ำ':os.length>1?'ซื้อซ้ำ':'ซื้อครั้งแรก';
+ return {...c,n:os.length,spend,last,ld,seg,pts:c.member?Math.floor(spend/10):0}}).filter(c=>c.n);
+const customers=()=>{const R=custRows();const q=$('qC').value.trim().toLowerCase(),f=$('fC').value;
+ const L=R.filter(c=>(!f||c.seg===f)&&(!q||[c.name,c.phone,c.prov].join(' ').toLowerCase().includes(q))).sort((a,b)=>b.last-a.last);
+ const due=R.filter(c=>c.seg.startsWith('ใกล้หมด')).length,rep=R.filter(c=>c.n>1).length;
+ $('cKpis').innerHTML=[['ลูกค้าที่ซื้อแล้ว',N(R.length)],['ซื้อซ้ำ',N(rep)],['ใกล้หมด ควรเตือน',N(due)],['ยอดซื้อเฉลี่ยต่อคน',B(R.reduce((s,c)=>s+c.spend,0)/(R.length||1))]].map(([l,v])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
+ $('tC').innerHTML=L.slice(0,limC).map(c=>`<tr><td>${esc(c.name)}${c.member?'':' <span class="pill">ไม่ได้สมัคร</span>'}</td><td style="white-space:nowrap">${esc(c.phone)}</td><td>${esc(c.prov)}</td><td class="n">${c.n}</td><td class="n">${B(c.spend)}</td><td class="n">${N(c.pts)}</td><td style="white-space:nowrap">${dstr(c.last)} · ${c.ld} วัน</td><td>${c.seg?pillS(c.seg).replace('pill ','pill '+(c.seg.startsWith('ใกล้')?'warn ':'')):''}</td></tr>`).join('')||'<tr><td colspan="8">ไม่พบลูกค้า</td></tr>';
+ $('moreC').hidden=L.length<=limC};
+
+/* ---------- stock ---------- */
+const stock=()=>{const g=D.stock.gel,m=D.stock.mousse,duo=Math.min(g,m);
+ const sold30=k=>D.orders.filter(o=>ok(o)&&inRange(o,0,30)).reduce((s,o)=>s+used(o)[k],0);
+ const card=(t,v,k)=>{const per=sold30(k)/30;const days=per?Math.floor(v/per):999;return `<div class="card"><div class="sample" style="margin:0">${t}</div><div class="v">${N(v)}</div><div class="meter"><i style="width:${Math.min(100,days/90*100)}%;background:${days<21?'var(--coral)':'var(--mint)'}"></i></div><div class="sample" style="margin:0">ขายเฉลี่ย ${per.toFixed(1)} ชิ้น/วัน · พอขายอีกประมาณ ${days} วัน</div></div>`};
+ $('stockCards').innerHTML=card('เจล คงเหลือ (หลอด)',g,'gel')+card('มูส คงเหลือ (ขวด)',m,'mousse')+`<div class="card"><div class="sample" style="margin:0">เซ็ต Duo พร้อมขาย</div><div class="v">${N(duo)}</div><div class="sample" style="margin:0">จำกัดโดย${g<=m?'เจล':'มูส'}</div></div>`;
+ const low=[['เจล',g,'gel'],['มูส',m,'mousse']].filter(([,v,k])=>v/(sold30(k)/30||1)<21);
+ $('stockAlert').innerHTML=low.map(([t])=>`<div class="alert">${t}เหลือขายได้ไม่ถึง 3 สัปดาห์ ควรสั่งผลิตหรือรับเข้าเพิ่ม</div>`).join('');
+ $('stockLog').innerHTML=D.stockLog.slice().reverse().map(l=>`<div><b>${dstr(l.t)}</b> · ${esc(l.m)}</div>`).join('')};
+
+/* ---------- affiliates ---------- */
+const affiliates=()=>{const rows=D.aff.map(a=>{const os=D.orders.filter(o=>o.ref&&o.ref===a.code);const by=s=>os.filter(o=>cstat(o)===s).reduce((x,o)=>x+comm(o),0);
+ return {...a,n:os.filter(ok).length,p:os.filter(ok).reduce((s,o)=>s+pcs(o),0),v:os.filter(ok).reduce((s,o)=>s+o.total,0),w:by('รอยืนยัน'),r:by('พร้อมจ่าย'),c:by('ปิดรอบแล้ว'),d:by('จ่ายแล้ว')}});
+ const t=k=>rows.reduce((s,r)=>s+r[k],0);
+ $('aKpis').innerHTML=[['ตัวแทนที่อนุมัติ',N(rows.filter(r=>r.status==='อนุมัติแล้ว').length)],['รออนุมัติ',N(rows.filter(r=>r.status==='รออนุมัติ').length)],['รอยืนยัน',B(t('w'))],['พร้อมจ่าย',B(t('r'))],['ปิดรอบแล้ว รอโอน',B(t('c'))],['จ่ายแล้ว',B(t('d'))]].map(([l,v])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
+ $('tA').innerHTML=rows.map((r,i)=>`<tr><td><b>${r.code}</b></td><td>${esc(r.name)}</td><td>${esc(r.ch)}</td><td>${pillS(r.status==='อนุมัติแล้ว'?'พร้อมจ่าย':'รอจัดส่ง').replace(/>[^<]+</,'>'+r.status+'<')}</td><td class="n">${r.n}</td><td class="n">${r.p}</td><td class="n">${B(r.v)}</td><td class="n">${B(r.w)}</td><td class="n">${B(r.r)}</td><td class="n">${B(r.c)}</td><td class="n">${B(r.d)}</td><td>${r.status==='รออนุมัติ'?`<button class="btn" data-appr="${i}" style="min-height:34px">อนุมัติ</button>`:''}</td></tr>`).join('');
+ return rows};
+
+/* ---------- CSV ---------- */
+const csvOf=k=>{const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';let H,R;
+ if(k==='orders'){H=['order_no','date','customer','phone','province','items','total','payment','ref','commission','commission_status','status','tracking'];R=D.orders.map(o=>{const c=cust(o.cid);return[o.no,new Date(o.date).toISOString().slice(0,10),c.name,c.phone,c.prov,items(o),o.total,o.pm,o.ref,comm(o),cstat(o),o.status,o.tracking]})}
+ else if(k==='analysis'){H=['order_no','date','customer_id','province','gel','mousse','duo','total','discount','payment','ref','commission','cogs','net_after_costs','status','repeat_order'];const seen={};R=D.orders.slice().reverse().map(o=>{const r=seen[o.cid]?1:0;seen[o.cid]=1;return[o.no,new Date(o.date).toISOString().slice(0,10),o.cid,cust(o.cid).prov,o.lines.gel||0,o.lines.mousse||0,o.lines.duo||0,o.total,o.disc,o.pm,o.ref,comm(o),cost(o),Math.round(profit(o)),o.status,r]})}
+ else{H=['code','name','pieces','sales','ready','closed','paid'];R=affiliates().filter(r=>r.status==='อนุมัติแล้ว').map(r=>[r.code,r.name,r.p,r.v,r.r,r.c,r.d])}
+ return '﻿'+[H,...R].map(r=>r.map(q).join(',')).join('\n')};
+
+/* ---------- app bridge ---------- */
+const feed=m=>{const f=$('feed');if(f.querySelector('.sample'))f.innerHTML='';f.insertAdjacentHTML('afterbegin',`<div><b>${new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</b> · ${m}</div>`)};
+window.addEventListener('message',e=>{const m=e.data;if(!m||typeof m!=='object')return;
+ if(m.type==='skinsip-order'&&m.order){const o=m.order;const cid='A'+String(D.customers.length+1);
+  D.customers.push({id:cid,name:String(o.customer?.name||'ลูกค้าจากแอป'),phone:String(o.customer?.phone||''),prov:'จากแอป',address:String(o.customer?.address||''),member:!!o.customer?.member});
+  const lines={};for(const k of Object.keys(P))if(o.lines&&+o.lines[k]>0)lines[k]=Math.floor(+o.lines[k]);
+  const ref=/^SK\d{3}$/.test(o.ref)?o.ref:'';
+  const no=String(o.no).replace(/[^A-Z0-9]/g,'');
+  D.orders.unshift({no,date:Date.now(),cid,lines,total:+o.total||0,disc:+o.discount||0,pm:o.pm==='บัตร'?'บัตร':'PromptPay',ref,status:'รอจัดส่ง',tracking:'',paid:'',app:true});
+  const u=used(D.orders[0]);D.stock.gel-=u.gel;D.stock.mousse-=u.mousse;
+  feed(`ออเดอร์ใหม่ <b>${esc(no)}</b> ${B(+o.total||0)}${ref?' · ผูกกับ '+ref+' ค่าคอม '+B(comm(D.orders[0]))+' (รอยืนยัน)':' · ขายตรง'} · ตัดสต็อกแล้ว`);toast('ออเดอร์ใหม่จากแอป '+no);renderAll()}
+ if(m.type==='skinsip-affiliate'){D.aff.push({code:'—',name:String(m.name||'ผู้สมัครจากแอป'),ch:String(m.channel||'—'),status:'รออนุมัติ'});feed(`ใบสมัครตัวแทนใหม่: <b>${esc(m.name||'')}</b> รออนุมัติในแท็บตัวแทน`);toast('ใบสมัครตัวแทนใหม่');renderAll()}
+});
+
+/* ---------- events ---------- */
+let DL=null;try{window.claude?.use?.('downloads').then(x=>DL=x,()=>{})}catch(e){}
+const download=async k=>{if(DL){try{await DL.save({filename:`skinsip-${k}-${new Date().toISOString().slice(0,10)}.csv`,data:csvOf(k)});return}catch(e){return toast('ไม่ได้บันทึกไฟล์ ลองใช้ปุ่มคัดลอก CSV')}}const blob=new Blob([csvOf(k)],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`skinsip-${k}-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();toast('ถ้าไฟล์ไม่ดาวน์โหลด ให้ใช้ปุ่มคัดลอก CSV แล้ววางใน Excel')};
+document.addEventListener('click',e=>{const t=e.target.closest('button,tr[data-o]');if(!t)return;const d=t.dataset;
+ if(d.o)return openOrder(d.o);
+ if(d.csv)return download(d.csv);
+ if(d.copy){try{navigator.clipboard.writeText(csvOf(d.copy)).then(()=>toast('คัดลอกแล้ว วางใน Excel หรือ Google Sheets ได้เลย'),()=>toast('คัดลอกไม่ได้ในหน้านี้'))}catch(err){toast('คัดลอกไม่ได้ในหน้านี้')}return}
+ if('close' in d)return $('dlg').close();
+ const ord=n=>D.orders.find(x=>x.no===n);
+ if(d.ship){const o=ord(d.ship);o.status='จัดส่งแล้ว';o.tracking='TH'+Math.floor(Math.random()*1e9);tellApp(o,'จัดส่งแล้ว');$('dlg').close();toast('อัปเดตแล้ว · ระบบแจ้งลูกค้าทาง LINE');if(o.app)feed(`${o.no} จัดส่งแล้ว · ส่งแจ้งเตือนพร้อมเลขพัสดุให้ลูกค้า`);return renderAll()}
+ if(d.done){const o=ord(d.done);o.status='ส่งสำเร็จ';tellApp(o,'ส่งสำเร็จ');$('dlg').close();return renderAll()}
+ if(d.ret){const o=ord(d.ret);o.status='คืนสินค้า';const u=used(o);D.stock.gel+=u.gel;D.stock.mousse+=u.mousse;tellApp(o,'คืนสินค้า · คืนเงินแล้ว');$('dlg').close();toast('บันทึกคืนสินค้า · หักค่าคอมและคืนสต็อกแล้ว');return renderAll()}
+ if(d.appr){const a=D.aff[+d.appr];const n=D.aff.filter(x=>/^SK\d+$/.test(x.code)).length+1;a.code='SK'+String(n).padStart(3,'0');a.status='อนุมัติแล้ว';toast(`อนุมัติ ${a.name} · โค้ด ${a.code} · แจ้งทาง LINE แล้ว`);return renderAll()}
+ if(t.id==='moreO'){limO+=25;return orders()}
+ if(t.id==='moreC'){limC+=25;return customers()}
+ if(t.id==='closeCycle'){let n=0;for(const o of D.orders)if(cstat(o)==='พร้อมจ่าย'){o.paid='ปิดรอบแล้ว';n++}toast(n?`ปิดรอบแล้ว ${n} รายการ · ล็อกไม่ให้จ่ายซ้ำ`:'ไม่มีรายการพร้อมจ่าย');return renderAll()}
+ if(t.id==='markPaid'){let n=0;for(const o of D.orders)if(o.paid==='ปิดรอบแล้ว'){o.paid='จ่ายแล้ว';n++}toast(n?`บันทึกโอนแล้ว ${n} รายการ`:'ยังไม่มีรอบที่ปิดไว้');return renderAll()}
+ if(t.id==='remind'){const n=custRows().filter(c=>c.seg.startsWith('ใกล้หมด')).length;return toast(`ต้นแบบ: ส่งข้อความเตือนสั่งซ้ำทาง LINE ให้ ${n} คน`)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset?.o)openOrder(e.target.dataset.o)});
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
+['qO','fO'].forEach(i=>$(i).addEventListener('input',()=>{limO=25;orders()}));
+['qC','fC'].forEach(i=>$(i).addEventListener('input',()=>{limC=25;customers()}));
+$('rate').addEventListener('input',()=>renderAll());
+$('fStock').addEventListener('submit',e=>{e.preventDefault();const k=$('sItem').value,q=Math.max(1,Math.floor(+$('sQty').value||0));D.stock[k]+=q;D.stockLog.push({t:Date.now(),m:`รับเข้า ${k==='gel'?'เจล':'มูส'} ${q} ชิ้น`});toast('บันทึกรับเข้าแล้ว');stock()});
+
+const renderAll=()=>{overview();orders();customers();stock();affiliates()};
+const VIEWS=['overview','orders','customers','stock','affiliates','app'];
+const route=()=>{const h=location.hash.slice(1);const v=VIEWS.includes(h)?h:'overview';VIEWS.forEach(x=>$('v-'+x).hidden=x!==v);document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+v));if(v==='overview')drawSales()};
+window.addEventListener('hashchange',route);
+renderAll();route();
+}
+</script>
+</body>
+</html>

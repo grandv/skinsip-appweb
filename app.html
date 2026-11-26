@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKINSIP Web App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<style>
+/* VOICE everyday product app, calm and clinical, friendly not loud
+   IDEA a pharmacy-grade skincare tube label: cobalt field, white label, one coral mark
+   PICTURE the gel tube and mousse bottle drawn large on the home card
+   COLOUR white ground, cobalt #2340d8 dominant, mint #d9f4ec support, coral #ff5a4e accent
+   TYPE Prompt 700 for titles + IBM Plex Sans Thai for text
+   LAYOUT one phone-width column; on laptop the app sits centred like a device */
+:root{color-scheme:light dark;--bg:light-dark(#eef0f7,#0b0f24);--app:light-dark(#ffffff,#121834);--ink:light-dark(#10163a,#eef1ff);--mute:light-dark(#5a6283,#a3abcf);--line:light-dark(#e2e5f0,#273055);--co:#2340d8;--co2:light-dark(#e8ecff,#1d2756);--mint:light-dark(#d9f4ec,#143a33);--coral:#ff5a4e;--card:light-dark(#f6f7fc,#19203f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+.app{max-width:440px;margin:0 auto;min-height:100%;background:var(--app);position:relative;display:flex;flex-direction:column}
+@media(min-width:700px){.app{margin:24px auto;min-height:calc(100% - 48px);border-radius:28px;box-shadow:0 10px 40px rgba(16,22,58,.15);overflow:hidden}}
+main{flex:1;padding:16px 16px 96px;overflow-y:auto}
+h1,h2,h3{font-family:Prompt,"IBM Plex Sans Thai",sans-serif;margin:0;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:28px}h2{font-size:20px;margin:22px 0 10px}h3{font-size:16px}
+p{margin:6px 0}.mute{color:var(--mute);font-size:14px}.small{font-size:13px;color:var(--mute)}
+.top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--app);position:sticky;top:0;z-index:5}
+.top h3{flex:1}
+.back{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--app);cursor:pointer;font-size:18px}
+.btn{display:block;width:100%;min-height:50px;border:0;border-radius:14px;background:var(--co);color:#fff;font-weight:600;font-size:16px;cursor:pointer;margin-top:14px}
+.btn.line{background:#06c755}.btn.ghost{background:var(--co2);color:var(--co)}
+:root[data-theme=dark] .btn.ghost{color:#c9d2ff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.back:focus-visible,.chip:focus-visible,.nav button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+label{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
+input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:16px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:10px 0;font-weight:400}
+.check input{width:22px;height:22px;min-height:0;flex:none;margin-top:1px;accent-color:var(--co)}
+.hero{background:var(--co);color:#fff;border-radius:22px;padding:18px;position:relative;overflow:hidden;min-height:210px}
+.hero h1{font-size:26px;max-width:60%}
+.hero p{max-width:58%;font-size:14px;opacity:.9}
+.hero svg{position:absolute;right:-6px;bottom:-4px;width:46%;height:100%}
+.hero .btn{width:auto;display:inline-block;padding:0 18px;background:#fff;color:var(--co);min-height:44px;margin-top:12px}
+.member{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.av{width:44px;height:44px;border-radius:50%;background:var(--mint);display:grid;place-items:center;font-family:Prompt;font-weight:700;color:var(--co)}
+.tier{font-size:12px;font-weight:600;color:var(--coral)}
+.credit{display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:14px;padding:10px 14px;margin:14px 0 4px;font-size:14px;color:var(--mute)}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.quick button{border:0;background:var(--card);border-radius:16px;padding:12px 4px;cursor:pointer;font-size:13px;min-height:84px}
+.quick svg{width:28px;height:28px;display:block;margin:0 auto 6px;color:var(--co)}
+:root[data-theme=dark] .quick svg{color:#9fb0ff}
+.plist{display:grid;gap:10px}
+.prod{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border-radius:16px;padding:10px;cursor:pointer;border:0;text-align:left;width:100%}
+.thumb{width:84px;height:84px;border-radius:12px;background:var(--co2);display:grid;place-items:center}
+.thumb svg{width:70px;height:70px}
+.price{font-family:Prompt;font-weight:700;white-space:nowrap}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--mint);color:var(--ink);margin-top:4px}
+.add{width:44px;height:44px;border-radius:50%;border:0;background:var(--co);color:#fff;font-size:22px;cursor:pointer}
+.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.row b{white-space:nowrap}
+.qty{display:flex;align-items:center;gap:8px}.qty button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--app);cursor:pointer}
+.big{background:var(--co2);border-radius:20px;height:220px;display:grid;place-items:center}.big svg{height:190px}
+.nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--app);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
+.nav button{border:0;background:none;padding:8px 2px 10px;font-size:12px;color:var(--mute);cursor:pointer;min-height:58px}
+.nav button svg{width:24px;height:24px;display:block;margin:0 auto 2px}
+.nav button.on{color:var(--co);font-weight:600}
+:root[data-theme=dark] .nav button.on{color:#9fb0ff}
+.badge{position:absolute;margin-left:12px;margin-top:-30px;background:var(--coral);color:#fff;border-radius:99px;font-size:11px;padding:0 6px}
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:84%;padding:10px 14px;border-radius:18px;font-size:15px}
+.bot{background:var(--card);border-bottom-left-radius:6px;align-self:flex-start}
+.me{background:var(--co);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{border:1px solid var(--co);color:var(--co);background:var(--app);border-radius:99px;padding:8px 14px;cursor:pointer;font-size:14px;min-height:40px}
+:root[data-theme=dark] .chip{color:#c9d2ff;border-color:#6d80ff}
+.rec{background:var(--app);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:8px}
+.refer{background:var(--mint);border-radius:16px;padding:12px;margin-top:8px}
+.clips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.clip{aspect-ratio:9/14;border-radius:16px;background:linear-gradient(160deg,var(--co),#5b74ff);color:#fff;padding:10px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.clip .pl{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;align-self:center}
+.clip span{font-size:12px;background:rgba(0,0,0,.25);padding:2px 8px;border-radius:99px;align-self:flex-start}
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}.filters .chip{flex:none}
+.chip.on{background:var(--co);color:#fff}
+.menu button{display:flex;justify-content:space-between;width:100%;border:0;border-bottom:1px solid var(--line);background:none;padding:16px 4px;cursor:pointer;text-align:left;min-height:56px}
+.ok{text-align:center;padding:30px 10px}.ok .ring{width:84px;height:84px;border-radius:50%;background:var(--mint);display:grid;place-items:center;margin:0 auto 14px;font-size:38px;color:var(--co)}
+.otp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.otp input{text-align:center;font-size:22px;padding:0}
+.steps{height:5px;background:var(--line);border-radius:9px;margin:4px 0 16px}.steps i{display:block;height:100%;background:var(--coral);border-radius:9px}
+.note{font-size:12px;color:var(--mute);text-align:center;margin-top:18px}
+.slider{position:relative}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;scrollbar-width:none;border-radius:22px}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;border-radius:22px;color:#fff;position:relative;overflow:hidden;min-height:210px;padding:18px}
+.slide svg,.slide img{position:absolute;right:-6px;bottom:-4px;width:46%;height:100%;object-fit:contain;object-position:bottom right}
+.slide .sc{position:relative;max-width:58%}
+.slide h1{font-size:24px}.slide p{font-size:14px;opacity:.92}
+.sbtn{margin-top:12px;min-height:44px;padding:0 18px;border:0;border-radius:14px;background:#fff;color:#10163a;font-weight:600;cursor:pointer}
+.dots{display:flex;justify-content:center;gap:4px;margin-top:6px}
+.dot{width:28px;height:28px;border:0;background:none;cursor:pointer;position:relative}
+.dot::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:9px;background:var(--line);transform:translate(-50%,-50%);transition:width .2s}
+.dot.on::after{width:20px;background:var(--co)}
+@media(prefers-reduced-motion:reduce){.dot::after{transition:none}}
+.fab{position:sticky;bottom:72px;margin:-64px 16px 8px auto;display:flex;align-items:center;gap:6px;height:52px;padding:0 18px;border:0;border-radius:99px;background:var(--coral);color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(255,90,78,.35);cursor:pointer;z-index:4}
+.fab svg{width:22px;height:22px}
+.scrim{position:fixed;inset:0;background:rgba(10,14,36,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.scrim[hidden]{display:none}
+.sheet{background:var(--app);width:100%;max-width:440px;border-radius:24px 24px 0 0;padding:10px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 12px}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px;margin-top:10px;cursor:pointer;min-height:64px}
+.opt small{display:block;color:var(--mute);font-size:13px}
+.oi{flex:none;width:40px;height:40px;border-radius:12px;background:var(--co);color:#fff;display:grid;place-items:center;font-family:Prompt;font-weight:700}
+.opt.partner{background:var(--mint);border-color:transparent}.opt.partner .oi{background:#0f7a63}
+.opt:focus-visible,.fab:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--app);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="scrim" id="sheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="grab"></div><h3 id="shT">ติดต่อเรา</h3>
+<button class="opt" data-act="sAdmin"><span class="oi">A</span><span><b>คุยกับแอดมิน SKINSIP</b><small>สอบถามออเดอร์ การจัดส่ง ตัวแทน · ตอบใน LINE@</small></span></button>
+<button class="opt" data-act="sBot"><span class="oi">B</span><span><b>ถามบอทเรื่องสินค้า</b><small>เลือกสินค้า ส่วนผสม วิธีใช้ · ตอบทันที</small></span></button>
+<button class="opt partner" data-act="derlain"><span class="oi">D</span><span><b>ปรึกษาแพทย์ผิวหนัง</b><small>Derlain Clinic คลินิกพันธมิตร · เปิดใน LINE ของคลินิก</small></span></button>
+<button class="btn ghost" data-act="close">ปิด</button></div></div>
+<script>
+{
+const P=[
+ {id:'gel',name:'SKINSIP Barrier Repair Gel',short:'เจลซ่อมเกราะผิว',price:490,pcs:1,shape:'tube',desc:'เจลเนื้อบางเบา ช่วยปลอบประโลมผิวที่แห้ง แดง แสบ และเสริมความแข็งแรงของเกราะผิว',use:'ทาบางๆ หลังล้างหน้า เช้าและเย็น'},
+ {id:'mousse',name:'SKINSIP Barrier Comfort Cleansing Mousse',short:'มูสล้างหน้าอ่อนโยน',price:390,pcs:1,shape:'bottle',desc:'มูสล้างหน้าฟองนุ่ม ทำความสะอาดอย่างอ่อนโยน ไม่ทำให้ผิวตึง',use:'กด 1–2 ครั้ง นวดเบาๆ แล้วล้างออก'},
+ {id:'duo',name:'SKINSIP Barrier Duo',short:'เซ็ตคู่ เจล + มูส',price:790,pcs:2,shape:'duo',desc:'ครบขั้นตอนพื้นฐานสำหรับผิวที่เกราะอ่อนแอ ล้างอ่อนโยนแล้วเติมเกราะผิว',use:'เช้า–เย็น: มูส แล้วตามด้วยเจล'}
+];
+const S={view:'login',tab:'home',user:null,cart:{},orders:[],sel:null,chat:[],ref:'',filter:'ทั้งหมด',agent:false,approved:false,points:0,back:null};
+const CODES=['SK001','SK002','SK003','SK004','SK005','SK006','SK007','SK008','SK009'];
+const RATE=40;
+const tell=m=>{try{if(window.parent!==window)window.parent.postMessage(m,'*')}catch(e){}};
+/* ---------- Firebase ---------- */
+let FB=null,UID=null;S.myCode='';S.affStats=null;
+try{firebase.initializeApp({apiKey:"AIzaSyCsiAtzebRIGYjAdZwXhxDt65-K4F7ewWY",authDomain:"skinsip.firebaseapp.com",projectId:"skinsip",storageBucket:"skinsip.firebasestorage.app",messagingSenderId:"514941349392",appId:"1:514941349392:web:9f12d31e39139f90e26495"});FB=firebase.firestore();
+ firebase.auth().onAuthStateChanged(u=>{if(!u){firebase.auth().signInAnonymously().catch(()=>{});return}UID=u.uid;listen()});}catch(e){FB=null}
+const LIVE_VIEWS=['home','orders','agent','done','me'];
+const listen=()=>{
+ FB.collection('orders').where('uid','==',UID).onSnapshot(snap=>{
+  const L=snap.docs.map(d=>{const x=d.data({serverTimestamps:'estimate'});const lines={};for(const p of P)if(x.lines&&+x.lines[p.id]>0)lines[p.id]=+x.lines[p.id];
+   return {no:String(x.no||d.id),date:x.createdAt?x.createdAt.toMillis():Date.now(),items:Object.entries(lines).map(([k,q])=>P.find(p=>p.id===k).short+' ×'+q).join(', '),lines,pcs:Object.entries(lines).reduce((a,[k,q])=>a+P.find(p=>p.id===k).pcs*q,0),total:+x.total||0,discount:+x.discount||0,pm:String(x.pm||''),status:String(x.status||''),tracking:String(x.tracking||''),ref:String(x.ref||''),member:!!x.member,earn:x.member?Math.floor((+x.total||0)/10):0}}).sort((a,b)=>b.date-a.date);
+  const prev={};S.orders.forEach(o=>prev[o.no]=o.status);
+  L.forEach(o=>{if(prev[o.no]&&prev[o.no]!==o.status)toast('แจ้งเตือน: '+o.no+' '+o.status)});
+  S.orders=L;S.points=L.filter(o=>o.member&&o.status!=='คืนสินค้า').reduce((a,o)=>a+o.earn,0)-L.reduce((a,o)=>a+o.discount*10,0);
+  if(LIVE_VIEWS.includes(S.view))render()},()=>{});
+ FB.collection('affiliates').where('uid','==',UID).onSnapshot(snap=>{const d=snap.docs[0];if(!d)return;const x=d.data();S.agent=true;
+  const was=S.approved;S.approved=x.status==='อนุมัติแล้ว'&&/^SK\d{3,}$/.test(x.code||'');S.myCode=S.approved?x.code:'';S.affStats=x.stats||null;
+  if(S.approved&&!was)toast('อนุมัติแล้ว โค้ดของคุณคือ '+S.myCode);if(LIVE_VIEWS.includes(S.view))render()},()=>{});
+};
+const fbOrder=o=>{if(!FB||!UID)return toast('ยังเชื่อมระบบไม่ได้ ออเดอร์นี้ยังไม่ถูกบันทึก');
+ FB.collection('orders').add({no:o.no,uid:UID,lines:o.lines,total:o.total,discount:o.discount,pm:o.pm,ref:o.ref,status:'รอจัดส่ง',customer:{name:o.customer.name,phone:o.customer.phone,address:o.customer.address},createdAt:firebase.firestore.FieldValue.serverTimestamp(),member:!!o.customer.member}).catch(e=>toast('บันทึกออเดอร์ไม่สำเร็จ: '+(e.code||'')))};
+const fbAff=f=>{if(!FB||!UID)return;FB.collection('affiliates').add({...f,status:'รออนุมัติ',uid:UID,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>toast('ส่งใบสมัครไม่สำเร็จ: '+(e.code||'')))};
+const $=id=>document.getElementById(id);
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const baht=n=>'฿'+n.toLocaleString('th-TH');
+const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1800)};
+const cartN=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
+const cartSum=()=>Object.entries(S.cart).reduce((a,[k,q])=>a+P.find(p=>p.id===k).price*q,0);
+const tube=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><path d="M14 8h32l-3 70H17z" fill="#fff" stroke="#2340d8" stroke-width="2"/><path d="M14 8h32v8H14z" fill="#2340d8"/><rect x="22" y="78" width="16" height="16" rx="3" fill="#2340d8"/><rect x="19" y="36" width="22" height="22" rx="3" fill="#d9f4ec"/><circle cx="30" cy="47" r="5" fill="#ff5a4e"/><path d="M40 16l-2 62" stroke="#e2e5f0" stroke-width="3"/></svg>`;
+const bottle=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><rect x="24" y="4" width="8" height="10" fill="#2340d8"/><path d="M32 8h12v5H32z" fill="#2340d8"/><rect x="20" y="14" width="16" height="10" rx="2" fill="#2340d8"/><rect x="12" y="24" width="32" height="70" rx="10" fill="#fff" stroke="#2340d8" stroke-width="2"/><rect x="17" y="44" width="22" height="26" rx="3" fill="#d9f4ec"/><circle cx="28" cy="57" r="5" fill="#ff5a4e"/><path d="M38 30v58" stroke="#e2e5f0" stroke-width="3"/></svg>`;
+const art=(p,w)=>p.shape==='tube'?tube(w):p.shape==='bottle'?bottle(w):`<span style="display:flex;align-items:flex-end">${tube(w*.62)}${bottle(w*.62)}</span>`;
+const I={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',shop:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',play:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 9l5 3-5 3z"/>',me:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',agent:'<path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 15.6 7 18.2l1-5.5-4-3.9L9.5 8z"/>',doc:'<path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/>'};
+const ic=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${I[k]}</svg>`;
+const top=(t,back)=>`<div class="top">${back?`<button class="back" data-go="${back}" aria-label="ย้อนกลับ">‹</button>`:''}<h3>${t}</h3></div>`;
+
+/* SLIDES: ใส่รูปจริงได้ที่ img: 'img/slide1.webp' (รูปแนวนอน 16:9) — ถ้าไม่มี img จะวาดภาพสินค้าแทน */
+const SLIDES=[
+ {t:'ดูแลเกราะผิวทุกวัน',d:'ไม่แน่ใจว่าเลือกตัวไหน ถาม SKINSIP Bot เรื่องสินค้าได้เลย',b:'ถามเรื่องสินค้า',a:'data-tab="consult"',art:'duo',bg:'#2340d8'},
+ {t:'Barrier Duo คุ้มกว่า',d:'มูสล้างหน้า + เจลบำรุง ครบขั้นตอนในเซ็ตเดียว',b:'ดูเซ็ตคู่',a:'data-p="duo"',art:'duo',bg:'#0f7a63'},
+ {t:'Barrier Repair Gel',d:'เจลเนื้อบางเบา ทาง่าย ใช้ได้ทุกวัน เช้าและเย็น',b:'ดูสินค้า',a:'data-p="gel"',art:'gel',bg:'#1b2a8f'},
+ {t:'ชวนเพื่อนใช้ ได้ค่าคอม',d:'สมัครเป็นตัวแทน รับลิงก์และโค้ดของคุณเอง',b:'สมัครตัวแทน',a:'data-go="agent"',art:'mousse',bg:'#ff5a4e'}
+];
+const strip=x=>x.replace(/<\/?svg[^>]*>/g,'');
+const slideArt=k=>k==='duo'?`<g transform="translate(6 30) scale(1.1)">${strip(tube(60))}</g><g transform="translate(56 40)">${strip(bottle(60))}</g>`:k==='gel'?`<g transform="translate(24 14) scale(1.5)">${strip(tube(60))}</g>`:`<g transform="translate(24 18) scale(1.45)">${strip(bottle(60))}</g>`;
+const slider=()=>`<div class="slider"><div class="track" id="track">${SLIDES.map((x,i)=>`<div class="slide" style="background:${x.bg}" aria-label="สไลด์ ${i+1} จาก ${SLIDES.length}">${x.img?`<img src="${x.img}" alt="">`:`<svg viewBox="0 0 120 140" preserveAspectRatio="xMidYMax meet">${slideArt(x.art)}</svg>`}<div class="sc"><h1>${x.t}</h1><p>${x.d}</p><button class="sbtn" ${x.a}>${x.b}</button></div></div>`).join('')}</div><div class="dots">${SLIDES.map((x,i)=>`<button class="dot${i?'':' on'}" data-dot="${i}" aria-label="ไปสไลด์ ${i+1}"></button>`).join('')}</div></div>`;
+const V={
+login:()=>`<main style="padding-bottom:30px"><div class="hero" style="min-height:300px;margin-top:10px"><h1>SKINSIP</h1><p>ดูแลเกราะผิวทุกวัน ซื้อสินค้า ถามข้อมูล และติดตามออเดอร์ได้ในที่เดียว</p><svg viewBox="0 0 120 140" preserveAspectRatio="xMidYMax meet">${'<g transform="translate(6 30) scale(1.1)">'+tube(60).replace(/<\/?svg[^>]*>/g,'')+'</g><g transform="translate(56 40) scale(1)">'+bottle(60).replace(/<\/?svg[^>]*>/g,'')+'</g>'}</svg></div>
+<button class="btn line" data-act="line">เข้าสู่ระบบด้วย LINE</button><button class="btn ghost" data-act="guest">ดูสินค้าก่อน (ไม่ต้องสมัคร)</button><p class="note">ต้นแบบ: ปุ่ม LINE จำลองการดึงชื่อจากบัญชี LINE</p></main>`,
+signup:()=>`${top('สมัครสมาชิก','login')}<main><div class="steps"><i style="width:50%"></i></div><p class="mute">ได้ชื่อจาก LINE แล้ว กรอกเพิ่มอีกนิดเพื่อจัดส่งและติดตามออเดอร์</p>
+<form id="fSign"><label for="nm">ชื่อ–นามสกุล *</label><input id="nm" required value="${esc(S.user?.name||'')}" autocomplete="name">
+<label for="ph">เบอร์โทรศัพท์ *</label><input id="ph" required inputmode="tel" placeholder="08X-XXX-XXXX" pattern="0[0-9]{2}-?[0-9]{3}-?[0-9]{4}">
+<label for="em">อีเมล</label><input id="em" type="email" placeholder="name@email.com">
+<label for="bd">วันเกิด (ไม่บังคับ)</label><input id="bd" type="date">
+<label class="check"><input type="checkbox" id="c1" required>ยอมรับเงื่อนไขการใช้บริการและนโยบายความเป็นส่วนตัว *</label>
+<label class="check"><input type="checkbox" id="c2">ยินยอมรับข่าวสารและโปรโมชั่นผ่าน LINE</label>
+<button class="btn" type="submit">รับรหัส OTP</button></form></main>`,
+otp:()=>`${top('ยืนยันเบอร์โทร','signup')}<main><div class="steps"><i style="width:100%"></i></div><p>ส่งรหัส 6 หลักไปที่ <b>${esc(S.user.phone)}</b></p><div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="o${i}" inputmode="numeric" maxlength="1" aria-label="รหัสหลักที่ ${i+1}">`).join('')}</div><button class="btn" data-act="otp">ยืนยัน</button><p class="note">ต้นแบบ: ใส่เลขอะไรก็ได้ 6 หลัก</p></main>`,
+home:()=>`<main><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?'SILVER MEMBER':'ยังไม่ได้เข้าสู่ระบบ'}</div></div></div>
+${slider()}
+<div class="credit"><span>แต้มสะสม <b style="color:var(--ink)">${S.points.toLocaleString()} แต้ม</b></span><span>10 แต้ม = ฿1</span></div>${S.orders.length?`<div class="refer" style="display:flex;align-items:center;gap:10px;margin-top:10px"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0;background:var(--co);color:#fff" data-reorder="0">สั่งซ้ำ</button></div>`:''}
+<div class="quick"><button data-tab="shop">${ic('shop')}ซื้อสินค้า</button><button data-tab="consult">${ic('chat')}ถามสินค้า</button><button data-tab="reviews">${ic('play')}รีวิว</button><button data-go="agent">${ic('agent')}เป็นตัวแทน</button></div>
+<h2>สินค้าแนะนำ</h2>${plist()}
+<h2>ออเดอร์ล่าสุด</h2>${S.orders.length?orderRows(1):'<p class="mute">ยังไม่มีออเดอร์</p>'}</main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
+shop:()=>`${top('ร้านค้า SKINSIP')}<main><p class="small">ราคาในต้นแบบเป็นราคาตัวอย่าง แอดมินกำหนดจริงในหลังบ้าน</p>${plist()}${cartN()?`<button class="btn" data-go="cart">ไปที่ตะกร้า (${cartN()}) · ${baht(cartSum())}</button>`:''}</main>`,
+product:()=>{const p=P.find(x=>x.id===S.sel);return `${top(p.short,S.back||'shop')}<main><div class="big">${art(p,150)}</div><h2>${p.name}</h2><p class="price" style="font-size:24px">${baht(p.price)}</p><p>${p.desc}</p><p class="mute">วิธีใช้: ${p.use}</p>${p.id==='duo'?'<span class="tag">คุ้มกว่าซื้อแยก '+baht(P[0].price+P[1].price-p.price)+'</span>':''}<button class="btn" data-add="${p.id}">ใส่ตะกร้า</button><button class="btn ghost" data-tab="consult">ไม่แน่ใจ? ถามบอทก่อน</button></main>`},
+cart:()=>{const it=Object.entries(S.cart);return `${top('ตะกร้า','shop')}<main>${it.length?it.map(([k,q])=>{const p=P.find(x=>x.id===k);return `<div class="row" style="align-items:center"><div style="flex:1"><b style="white-space:normal">${p.short}</b><div class="small">${baht(p.price)}</div></div><div class="qty"><button data-q="${k}" data-d="-1" aria-label="ลด">−</button><span>${q}</span><button data-q="${k}" data-d="1" aria-label="เพิ่ม">+</button></div></div>`}).join('')+`<div class="row"><span>รวม</span><b>${baht(cartSum())}</b></div><button class="btn" data-go="checkout">ชำระเงิน</button>`:'<p class="mute">ตะกร้าว่าง</p><button class="btn" data-tab="shop">เลือกสินค้า</button>'}</main>`},
+checkout:()=>`${top('ชำระเงิน','cart')}<main><form id="fPay"><h3>ที่อยู่จัดส่ง</h3><label for="an">ชื่อผู้รับ *</label><input id="an" required value="${esc(S.user?.name||'')}"><label for="ap">เบอร์โทร *</label><input id="ap" required inputmode="tel" value="${esc(S.user?.phone||'')}"><label for="ad">ที่อยู่ *</label><input id="ad" required placeholder="บ้านเลขที่ ถนน แขวง เขต จังหวัด รหัสไปรษณีย์">
+<label for="rc">โค้ดผู้แนะนำ (ถ้ามี)</label><input id="rc" placeholder="เช่น SK001" value="${esc(S.ref)}" style="text-transform:uppercase">
+<h3 style="margin-top:18px">วิธีชำระเงิน</h3><label class="check"><input type="radio" name="pm" value="PromptPay" checked>QR พร้อมเพย์</label><label class="check"><input type="radio" name="pm" value="บัตร">บัตรเครดิต / เดบิต</label>
+<div class="row"><span>สินค้า</span><b>${baht(cartSum())}</b></div><div class="row"><span>ค่าส่ง</span><b>ฟรี</b></div><div class="row"><span>รวม</span><b>${baht(cartSum())}</b></div>
+${S.points>=10?`<label class="check"><input type="checkbox" id="usePts">ใช้แต้มลด ${baht(ptsDisc())} (จาก ${S.points} แต้ม)</label>`:''}<p class="small">ออเดอร์นี้จะได้ ${Math.floor(cartSum()/10)} แต้ม</p><button class="btn" type="submit">ยืนยันและชำระเงิน</button></form><p class="note">ต้นแบบ: ยังไม่เชื่อมผู้ให้บริการรับชำระเงินจริง</p></main>`,
+done:()=>{const o=S.orders[0];return `<main><div class="ok"><div class="ring">✓</div><h1>สั่งซื้อสำเร็จ</h1><p>เลขออเดอร์ <b>${o.no}</b></p><p class="mute">ระบบจะแจ้งสถานะจัดส่งทาง LINE${o.ref?' · ผูกกับผู้แนะนำ '+esc(o.ref):''}</p>${S.user?'':`<div class="refer" style="text-align:left;margin-top:16px"><b>เพิ่มเพื่อน LINE@ SKINSIP</b><p class="small" style="color:inherit">รับแจ้งสถานะจัดส่ง เลขพัสดุ และโปรโมชั่นทาง LINE</p><button class="btn line" data-act="addfriend" style="min-height:44px">เพิ่มเพื่อน</button></div>`}<p class="small">ได้รับ ${o.earn} แต้ม</p><button class="btn" data-tab="home">กลับหน้าหลัก</button><button class="btn ghost" data-go="orders">ดูออเดอร์ของฉัน</button></div></main>`},
+consult:()=>`${top('SKINSIP Bot · ถามเรื่องสินค้า')}<main><div class="chat" id="chat">${S.chat.map(renderMsg).join('')}</div></main>`,
+reviews:()=>{const F=['ทั้งหมด','TikTok','Facebook','Instagram','YouTube'];const C=[['TikTok','คลิปรีวิว 1'],['Facebook','คลิปรีวิว 2'],['Instagram','คลิปรีวิว 3'],['TikTok','คลิปรีวิว 4'],['YouTube','คลิปรีวิว 5'],['TikTok','คลิปรีวิว 6']].filter(c=>S.filter==='ทั้งหมด'||c[0]===S.filter);
+ return `${top('รีวิวจากโซเชียล')}<main><div class="filters">${F.map(f=>`<button class="chip ${S.filter===f?'on':''}" data-f="${f}">${f}</button>`).join('')}</div><p class="small">ช่องตัวอย่าง: ทีมจะใส่คลิปจริงจากโซเชียลที่คัดแล้ว กดแล้วเปิดคลิปต้นทาง</p><div class="clips">${C.map(c=>`<div class="clip"><span>${c[0]}</span><div class="pl">▶</div><b>${c[1]}</b></div>`).join('')}</div></main>`},
+me:()=>`${top('บัญชีของฉัน')}<main><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="small">${S.user?esc(S.user.phone):'เข้าสู่ระบบเพื่อดูประวัติ'}</div></div></div>
+<div class="menu"><button data-go="orders"><span>ออเดอร์ของฉัน</span><span>${S.orders.length} ›</span></button><button data-go="agent"><span>${S.approved?'แดชบอร์ดตัวแทน':'สมัครเป็นตัวแทน (Affiliate)'}</span><span>${S.approved?S.myCode+' ›':S.agent?'รออนุมัติ':'›'}</span></button><button data-go="info"><span>ข้อมูลสินค้า การจัดส่ง และการคืนสินค้า</span><span>›</span></button><button data-act="admin"><span>คุยกับแอดมินใน LINE@</span><span>›</span></button><button data-act="derlain"><span>ปรึกษาแพทย์ผิวหนัง · Derlain Clinic (พันธมิตร)</span><span>›</span></button>${S.user?'<button data-act="logout"><span>ออกจากระบบ</span><span>›</span></button>':'<button data-go="login"><span>เข้าสู่ระบบ</span><span>›</span></button>'}</div></main>`,
+orders:()=>`${top('ออเดอร์ของฉัน','me')}<main>${S.orders.length?orderRows():'<p class="mute">ยังไม่มีออเดอร์</p>'}</main>`,
+agent:()=>S.approved?affDash():S.agent?`${top('ตัวแทน SKINSIP','me')}<main><div class="ok"><div class="ring">⏳</div><h1>ส่งใบสมัครแล้ว</h1><p class="mute">แอดมินจะตรวจและแจ้งผลทาง LINE เมื่ออนุมัติจะได้ลิงก์และโค้ดเฉพาะตัว</p><button class="btn" data-tab="home">กลับหน้าหลัก</button><p class="small">หน้านี้จะเปลี่ยนเป็นแดชบอร์ดตัวแทนทันทีเมื่อแอดมินกดอนุมัติในหลังบ้าน</p></div></main>`:
+`${top('สมัครเป็นตัวแทน','me')}<main><div class="hero" style="min-height:0"><h1 style="max-width:100%">แชร์แล้วได้ค่าคอมทุกชิ้น</h1><p style="max-width:100%">รับลิงก์และโค้ดเฉพาะตัว ดาวน์โหลดสื่อแบรนด์ ดูยอดขายและค่าคอมได้ในแอป</p></div>
+<form id="fAg"><label for="gn">ชื่อ–นามสกุล *</label><input id="gn" required value="${esc(S.user?.name||'')}"><label for="gp">เบอร์โทร *</label><input id="gp" required inputmode="tel" value="${esc(S.user?.phone||'')}">
+<label for="gc">ช่องทางหลักที่จะขาย *</label><select id="gc" required><option value="">เลือก</option><option>TikTok</option><option>Facebook</option><option>Instagram</option><option>LINE / เพื่อนและครอบครัว</option><option>ร้านค้า / คลินิก</option></select>
+<label for="gl">ลิงก์โปรไฟล์</label><input id="gl" placeholder="https://"><label for="gf">จำนวนผู้ติดตามโดยประมาณ</label><select id="gf"><option>น้อยกว่า 1,000</option><option>1,000–10,000</option><option>10,000–50,000</option><option>มากกว่า 50,000</option></select>
+<button class="btn" type="submit">ส่งใบสมัคร</button></form></main>`
+};
+const plist=()=>`<div class="plist">${P.map(p=>`<div class="prod" data-p="${p.id}" role="button" tabindex="0"><div class="thumb">${art(p,62)}</div><div><b style="font-size:15px">${p.short}</b><div class="small">${p.name}</div><span class="price">${baht(p.price)}</span>${p.id==='duo'?' <span class="tag">คุ้มสุด</span>':''}</div><button class="add" data-add="${p.id}" aria-label="ใส่ตะกร้า ${p.short}">+</button></div>`).join('')}</div>`;
+const orderRows=n=>(n?S.orders.slice(0,n):S.orders).map((o,i)=>`<div class="row" style="flex-wrap:wrap"><div><b>${o.no}</b><div class="small">${o.items} · ${o.pm}</div>${o.tracking?`<div class="small">เลขพัสดุ ${esc(o.tracking)}</div>`:''}</div><div style="text-align:right"><b>${baht(o.total)}</b><div class="small">${esc(o.status)}</div><button class="chip" style="margin-top:4px;min-height:32px;padding:4px 12px" data-reorder="${i}">สั่งซ้ำ</button></div></div>`).join('');
+const ptsDisc=()=>Math.min(Math.floor(S.points/10),Math.floor(cartSum()*0.1));
+const affDash=()=>{const st=S.affStats||{};const C=S.myCode||'—';const pcs=+st.pcs||0;const mine=[];
+ return `${top('แดชบอร์ดตัวแทน','me')}<main><div class="hero" style="min-height:0"><p style="max-width:100%;margin:0">โค้ดของคุณ</p><h1 style="max-width:100%;font-size:34px">${C}</h1><p style="max-width:100%">ลิงก์: โดเมนแบรนด์/?ref=${C}</p><button class="sbtn" data-act="copycode">คัดลอกลิงก์</button> <button class="sbtn" data-act="sharel" style="background:#06c755;color:#fff">แชร์เข้า LINE</button></div>
+<div class="quick" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="refer" style="margin:0"><div class="small" style="color:inherit">ออเดอร์</div><b style="font-size:22px">${+st.orders||0}</b></div><div class="refer" style="margin:0"><div class="small" style="color:inherit">ชิ้น</div><b style="font-size:22px">${pcs}</b></div><div class="refer" style="margin:0"><div class="small" style="color:inherit">ค่าคอม</div><b style="font-size:22px">${baht((+st.pending||0)+(+st.ready||0)+(+st.closed||0)+(+st.paid||0))}</b></div></div>
+<h2>ค่าคอมของคุณ</h2><div class="row"><span>รอยืนยัน</span><b>${baht(+st.pending||0)}</b></div><div class="row"><span>พร้อมจ่าย</span><b>${baht(+st.ready||0)}</b></div><div class="row"><span>ปิดรอบแล้ว รอโอน</span><b>${baht(+st.closed||0)}</b></div><div class="row"><span>จ่ายแล้ว</span><b>${baht(+st.paid||0)}</b></div>
+<p class="small">ไม่แสดงชื่อ เบอร์ และที่อยู่ลูกค้า · อัปเดตจากหลังบ้านอัตโนมัติ</p><h2>สื่อแบรนด์</h2><button class="btn ghost" data-act="media">ดาวน์โหลดรูปและคลิปสำหรับโพสต์</button></main>`};
+V.info=()=>`${top('ข้อมูลและนโยบาย','me')}<main><p class="small">ช่องที่ยังว่างรอข้อมูลจริงจากแบรนด์</p>
+<h2>ข้อมูลสินค้า</h2>${P.slice(0,2).map(p=>`<div class="row"><span>${p.short}</span><b>เลขจดแจ้ง อย.: รอข้อมูล</b></div>`).join('')}
+<h2>การจัดส่ง</h2><p>ส่งภายใน 1–2 วันทำการหลังชำระเงิน แจ้งเลขพัสดุทาง LINE (ตัวอย่าง รอยืนยันขนส่งจริง)</p>
+<h2>การคืนสินค้า</h2><p>รอกำหนดระยะเวลารับคืนสินค้า</p>
+<h2>คำถามที่พบบ่อย</h2>${[['ใช้คู่กับสกินแคร์อื่นได้ไหม','ใช้คู่กับมอยส์เจอไรเซอร์และครีมกันแดดทั่วไปได้'],['เปิดแล้วใช้ได้นานแค่ไหน','รอข้อมูลจากฉลากจริง'],['สั่งโดยไม่สมัครสมาชิกได้ไหม','ได้ แต่จะไม่ได้รับแต้มสะสม']].map(q=>`<details class="row" style="display:block"><summary style="cursor:pointer;min-height:32px">${q[0]}</summary><p class="mute">${q[1]}</p></details>`).join('')}</main>`;
+
+/* ---------- bot ---------- */
+const FLOW={
+start:{t:'สวัสดีค่ะ SKINSIP Bot ตอบได้เฉพาะเรื่องสินค้า การสั่งซื้อ และการจัดส่งนะคะ อยากทราบเรื่องไหนคะ',c:[['ช่วยเลือกสินค้า','pick'],['ส่วนผสม','fIng'],['ใช้คู่กับสกินแคร์อื่นได้ไหม','fMix'],['จัดส่ง / คืนสินค้า','fShip'],['มีปัญหาผิว อยากปรึกษาแพทย์','derlain'],['คุยกับแอดมิน','admin']]},
+pick:{t:'อยากได้แบบไหนคะ',c:[['ครบขั้นตอน ล้าง + บำรุง','recDuo'],['เจลบำรุงอย่างเดียว','recGel'],['มูสล้างหน้าอย่างเดียว','recMousse']]},
+fIng:{t:'รายละเอียดส่วนผสมดูได้ในหน้าสินค้า (ต้นแบบ: ทีมจะใส่ข้อมูลส่วนผสมจริงตามที่จดแจ้ง)',c:[['ดูสินค้า','goShop'],['กลับเมนูหลัก','start']]},
+fMix:{t:'ใช้คู่กับมอยส์เจอไรเซอร์และครีมกันแดดทั่วไปได้ค่ะ ถ้าใช้สกินแคร์ตัวไหนแล้วผิวไม่สบาย แนะนำปรึกษาแพทย์ก่อนนะคะ',c:[['ช่วยเลือกสินค้า','pick'],['กลับเมนูหลัก','start']]},
+fShip:{t:'ต้นแบบ: ระยะเวลาจัดส่งและเงื่อนไขคืนสินค้าจะใส่ตามนโยบายร้านจริง',c:[['คุยกับแอดมิน','admin'],['กลับเมนูหลัก','start']]},
+recDuo:{t:'Barrier Duo ค่ะ ล้างด้วยมูส แล้วทาเจลเช้า–เย็น คุ้มกว่าซื้อแยก',rec:'duo',c:[['ถามเรื่องอื่น','start']]},
+recGel:{t:'Barrier Repair Gel ค่ะ ทาบางๆ หลังล้างหน้า เช้าและเย็น',rec:'gel',c:[['ถามเรื่องอื่น','start']]},
+recMousse:{t:'Barrier Comfort Cleansing Mousse ค่ะ ฟองนุ่ม ล้างแล้วผิวไม่ตึง',rec:'mousse',c:[['ถามเรื่องอื่น','start']]},
+derlain:{t:'SKINSIP ให้ข้อมูลได้เฉพาะเรื่องสินค้าค่ะ เรื่องอาการผิวแนะนำปรึกษาแพทย์ที่ Derlain Clinic ซึ่งเป็นพันธมิตรของเรา แชทจะเปิดใน LINE ของคลินิกโดยตรง',partner:true,c:[['กลับเมนูหลัก','start']]},
+admin:{t:'ส่งต่อให้แอดมิน SKINSIP แล้วค่ะ แอดมินจะตอบในแชทนี้ (ต้นแบบ: ระบบจริงจะสลับเป็นโหมดแอดมินใน LINE@)',c:[['กลับเมนูหลัก','start']]}
+};
+const renderMsg=m=>{if(m.me)return `<div class="msg me">${esc(m.t)}</div>`;
+ let h=`<div class="msg bot">${m.t}`;
+ if(m.rec){const p=P.find(x=>x.id===m.rec);h+=`<div class="rec"><div style="display:flex;gap:10px;align-items:center"><div class="thumb" style="width:60px;height:60px">${art(p,48)}</div><div><b>${p.short}</b><div class="price">${baht(p.price)}</div></div></div><button class="btn" data-add="${p.id}" data-buy="1" style="min-height:44px">สั่งเลย</button></div>`}
+ if(m.partner)h+=`<div class="refer"><b>Derlain Clinic</b><p class="small" style="color:inherit">คลินิกพันธมิตร · ข้อมูลที่คุยกับคลินิกเก็บแยกจาก SKINSIP</p><button class="btn" data-act="derlain" style="min-height:44px;margin-top:6px">เปิดแชท Derlain Clinic</button></div>`;
+ h+='</div>';
+ if(m.c&&m.last)h+=`<div class="chips">${m.c.map(([l,k])=>`<button class="chip" data-bot="${k}" data-l="${esc(l)}">${esc(l)}</button>`).join('')}</div>`;
+ return h};
+const bot=k=>{if(k==='goShop'){S.tab='shop';S.view='shop';return render()}
+ const f=FLOW[k];S.chat.forEach(m=>m.last=false);S.chat.push({t:f.t,c:f.c,rec:f.rec,partner:f.partner,last:true});render();const c=$('chat');c&&c.lastElementChild&&c.lastElementChild.scrollIntoView({block:'end'})};
+
+/* ---------- render ---------- */
+const MAIN=['home','shop','consult','reviews','me'];
+const render=()=>{
+ if(S.view==='consult'&&!S.chat.length){const f=FLOW.start;S.chat.push({t:f.t,c:f.c,last:true})}
+ const nav=MAIN.includes(S.view)||['product','cart','orders','agent'].includes(S.view);
+ const L={home:['home','หน้าหลัก'],shop:['shop','ร้านค้า'],consult:['chat','ถามสินค้า'],reviews:['play','รีวิว'],me:['me','ฉัน']};
+ $('app').innerHTML=V[S.view]()+(nav?`<nav class="nav">${MAIN.map(t=>`<button data-tab="${t}" class="${S.tab===t?'on':''}">${ic(L[t][0])}${L[t][1]}${t==='shop'&&cartN()?`<span class="badge">${cartN()}</span>`:''}</button>`).join('')}</nav>`:'');
+ const m=document.querySelector('main');if(m)m.scrollTop=0;
+ initSlider();
+};
+let sTimer=null;
+const initSlider=()=>{clearInterval(sTimer);const tr=$('track');if(!tr)return;
+ const dots=[...document.querySelectorAll('.dot')];const cur=()=>Math.round(tr.scrollLeft/tr.clientWidth);
+ tr.addEventListener('scroll',()=>{const c=cur();dots.forEach((d,i)=>d.classList.toggle('on',i===c))},{passive:true});
+ const to=i=>tr.scrollTo({left:i*(tr.clientWidth+10),behavior:'smooth'});
+ tr._to=to;
+ tr.tabIndex=0;tr.addEventListener('keydown',e=>{if(e.key==='ArrowRight')to(Math.min(cur()+1,SLIDES.length-1));if(e.key==='ArrowLeft')to(Math.max(cur()-1,0))});
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let hold=false;tr.addEventListener('pointerdown',()=>hold=true);sTimer=setInterval(()=>{if(hold||!document.body.contains(tr))return;to((cur()+1)%SLIDES.length)},5000)}
+};
+const closeSheet=()=>{$('sheet').hidden=true};
+const go=v=>{S.view=v;if(MAIN.includes(v))S.tab=v;render()};
+
+document.addEventListener('click',e=>{
+ if(e.target.id==='sheet')return closeSheet();
+ const ro=e.target.closest('[data-reorder]');if(ro){const o=S.orders[+ro.dataset.reorder];if(o){S.cart={...o.lines};toast('ใส่ชุดเดิมลงตะกร้าแล้ว');go('cart')}return}
+ const dt=e.target.closest('[data-dot]');if(dt){const tr=$('track');tr&&tr._to(+dt.dataset.dot);return}
+ const t=e.target.closest('[data-tab],[data-go],[data-act],[data-add],[data-p],[data-q],[data-bot],[data-f]');if(!t)return;
+ const d=t.dataset;
+ if(d.add){e.stopPropagation();S.cart[d.add]=(S.cart[d.add]||0)+1;toast('ใส่ตะกร้าแล้ว');if(d.buy){go('cart')}else render();return}
+ if(d.tab)return go(d.tab);
+ if(d.go){if(d.go==='product')return;S.back=null;return go(d.go)}
+ if(d.p){S.sel=d.p;S.back=S.view;S.view='product';return render()}
+ if(d.q){S.cart[d.q]+=+d.d;if(S.cart[d.q]<=0)delete S.cart[d.q];return render()}
+ if(d.f){S.filter=d.f;return render()}
+ if(d.bot){S.chat.forEach(m=>m.last=false);S.chat.push({me:true,t:d.l});return bot(d.bot)}
+ const a=d.act;
+ if(a==='line'){S.user={name:'คุณสมาธิ',phone:''};return go('signup')}
+ if(a==='guest')return go('home');
+ if(a==='otp'){const v=[0,1,2,3,4,5].map(i=>$('o'+i).value).join('');if(!/^\d{6}$/.test(v))return toast('กรอกรหัสให้ครบ 6 หลัก');toast('สมัครสมาชิกสำเร็จ');return go('home')}
+ if(a==='logout'){S.user=null;return go('login')}
+ if(a==='admin'){S.view='consult';S.tab='consult';if(!S.chat.length)render();S.chat.forEach(m=>m.last=false);S.chat.push({me:true,t:'คุยกับแอดมิน'});return bot('admin')}
+ if(a==='approve'){S.approved=true;toast('อนุมัติแล้ว โค้ดของคุณคือ '+S.myCode);return render()}
+ if(a==='copycode'){try{navigator.clipboard.writeText('?ref='+S.myCode).then(()=>toast('คัดลอกแล้ว'),()=>toast('คัดลอกไม่ได้ในหน้านี้'))}catch(err){toast('คัดลอกไม่ได้ในหน้านี้')}return}
+ if(a==='sharel')return toast('ต้นแบบ: เปิดหน้าต่างเลือกเพื่อนใน LINE');
+ if(a==='media')return toast('ต้นแบบ: เปิดคลังสื่อแบรนด์');
+ if(a==='addfriend')return toast('ต้นแบบ: เปิดหน้าเพิ่มเพื่อน LINE@');
+ if(a==='derlain'){closeSheet();return toast('ต้นแบบ: เปิด LINE OA ของ Derlain Clinic')}
+ if(a==='fab'){$('sheet').hidden=false;$('sheet').querySelector('button').focus();return}
+ if(a==='close')return closeSheet();
+ if(a==='sAdmin'){closeSheet();S.view='consult';S.tab='consult';if(!S.chat.length)render();S.chat.forEach(m=>m.last=false);S.chat.push({me:true,t:'คุยกับแอดมิน'});return bot('admin')}
+ if(a==='sBot'){closeSheet();return go('consult')}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.p){S.sel=e.target.dataset.p;S.back=S.view;S.view='product';render()}});
+document.addEventListener('input',e=>{const m=/^o(\d)$/.exec(e.target.id);if(m&&e.target.value&&+m[1]<5)$('o'+(+m[1]+1)).focus()});
+document.addEventListener('submit',e=>{e.preventDefault();const id=e.target.id;
+ if(id==='fSign'){S.user={name:$('nm').value.trim(),phone:$('ph').value.trim()};return go('otp')}
+ if(id==='fPay'){const ref=$('rc').value.trim().toUpperCase();const pm=document.querySelector('input[name=pm]:checked').value;
+  const okRef=/^SK\d{3,}$/.test(ref)&&ref!==S.myCode;
+  const lines={...S.cart};const items=Object.entries(lines).map(([k,q])=>P.find(p=>p.id===k).short+' ×'+q).join(', ');
+  const pcs=Object.entries(lines).reduce((a,[k,q])=>a+P.find(p=>p.id===k).pcs*q,0);
+  const use=$('usePts')&&$('usePts').checked?ptsDisc():0;const total=cartSum()-use;const earn=Math.floor(total/10);
+  S.points=S.points-use*10+(S.user?earn:0);
+  const o={no:'SKS'+String(20001+Math.floor(Math.random()*8999)),date:new Date().toISOString(),items,lines,pcs,total,discount:use,pm,status:'ชำระแล้ว · รอจัดส่ง',ref:okRef?ref:'',earn:S.user?earn:0,
+   customer:{name:$('an').value.trim(),phone:$('ap').value.trim(),address:$('ad').value.trim(),member:!!S.user}};
+  S.orders.unshift(o);tell({type:'skinsip-order',order:o});fbOrder(o);
+  if(ref&&!okRef)toast('โค้ดไม่ถูกต้องหรือเป็นโค้ดของคุณเอง บันทึกเป็นออเดอร์ขายตรง');S.ref=ref;S.cart={};return go('done')}
+ if(id==='fAg'){S.agent=true;fbAff({name:$('gn').value.trim(),phone:$('gp').value.trim(),channel:$('gc').value,link:$('gl').value.trim(),followers:$('gf').value});return render()}
+});
+window.addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='skinsip-status')return;const o=S.orders.find(x=>x.no===m.no);if(!o)return;o.status=m.status;if(m.tracking)o.tracking=m.tracking;toast('แจ้งเตือน LINE: '+o.no+' '+m.status);render()});
+render();
+}
+</script>
+</body>
+</html>
