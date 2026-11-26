@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#e6f0fc">
 <title>SKINSIP Web App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,10 +15,10 @@
 /* VOICE everyday product app, calm and clinical, friendly not loud
    IDEA a pharmacy-grade skincare tube label: cobalt field, white label, one coral mark
    PICTURE the gel tube and mousse bottle drawn large on the home card
-   COLOUR white ground, cobalt #2340d8 dominant, mint #d9f4ec support, coral #ff5a4e accent
+   COLOUR white ground, cobalt #1f3f9a dominant, mint #d9f4ec support, coral #ff5a4e accent
    TYPE Prompt 700 for titles + IBM Plex Sans Thai for text
    LAYOUT one phone-width column; on laptop the app sits centred like a device */
-:root{color-scheme:light dark;--bg:light-dark(#eef0f7,#0b0f24);--app:light-dark(#ffffff,#121834);--ink:light-dark(#10163a,#eef1ff);--mute:light-dark(#5a6283,#a3abcf);--line:light-dark(#e2e5f0,#273055);--co:#2340d8;--co2:light-dark(#e8ecff,#1d2756);--mint:light-dark(#d9f4ec,#143a33);--coral:#ff5a4e;--card:light-dark(#f6f7fc,#19203f)}
+:root{color-scheme:light dark;--bg:light-dark(#eef0f7,#0b0f24);--app:light-dark(#ffffff,#121834);--ink:light-dark(#10163a,#eef1ff);--mute:light-dark(#5a6283,#a3abcf);--line:light-dark(#e2e5f0,#273055);--co:#1f3f9a;--co2:light-dark(#e8ecff,#1d2756);--mint:light-dark(#d9f4ec,#143a33);--coral:#ff5a4e;--card:light-dark(#f6f7fc,#19203f)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%}
@@ -118,6 +119,57 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(-
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--app);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* ---- SKINSIP Blue Lab theme: ice-blue ground, navy italic headlines, glass cards ---- */
+:root,:root[data-theme=dark],:root[data-theme=light]{color-scheme:light;--bg:#e6f0fc;--app:#f5f9ff;--ink:#0b1f4f;--mute:#5b6f93;--line:#d5e4f7;--co:#1f3f9a;--co2:#e3effd;--mint:#e8f2ff;--coral:#4f9df0;--card:#ffffff}
+body{background:radial-gradient(120% 60% at 10% 0%,#ffffff 0,#e9f2fd 45%,#d9e8fb 100%) fixed}
+.app{background:linear-gradient(180deg,#f8fbff 0,#eef5ff 100%)}
+@media(min-width:700px){.app{box-shadow:0 20px 60px rgba(31,63,154,.18)}}
+h1,h2{font-style:italic;font-weight:700;color:var(--ink)}
+.sky{background:linear-gradient(90deg,#3f8fea,#8cc2fb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{border-radius:999px;background:linear-gradient(135deg,#1f3f9a,#2f63d6);box-shadow:0 6px 16px rgba(31,63,154,.22)}
+.btn.ghost,:root[data-theme=dark] .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.line{background:#06c755}
+.top{background:rgba(255,255,255,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{background:rgba(255,255,255,.85);backdrop-filter:blur(10px)}
+.nav button.on,:root[data-theme=dark] .nav button.on{color:var(--co)}
+.quick svg,:root[data-theme=dark] .quick svg{color:#3f8fea}
+.quick button,.prod,.opt,.rec,.credit{background:#fff;border:1px solid var(--line);box-shadow:0 6px 18px rgba(31,63,154,.07)}
+.quick button{border-radius:20px}
+.prod{border-radius:20px}
+.thumb{background:linear-gradient(160deg,#e3effd,#f7fbff)}
+.add{background:linear-gradient(135deg,#1f3f9a,#2f63d6)}
+.tag{background:#e3effd;color:var(--co)}
+.tier{color:#3f8fea}
+.av{background:#e3effd;color:var(--co)}
+.refer{background:#eef5ff;border:1px solid var(--line)}
+.chip,:root[data-theme=dark] .chip{border-color:#9cc4f5;color:var(--co);background:#fff}
+.chip.on{background:var(--co);color:#fff}
+.me{background:linear-gradient(135deg,#1f3f9a,#2f63d6)}
+.bot{background:#fff;border:1px solid var(--line)}
+.hero{background:linear-gradient(160deg,#d6e8ff 0,#f3f8ff 70%);color:var(--ink);border:1px solid #fff;box-shadow:inset 0 0 0 1px var(--line)}
+.hero h1{color:var(--ink)}
+.hero p{opacity:1;color:var(--mute)}
+.hero .btn,.sbtn{background:linear-gradient(135deg,#1f3f9a,#2f63d6);color:#fff}
+.fab{background:linear-gradient(135deg,#3f8fea,#1f3f9a);box-shadow:0 8px 22px rgba(31,63,154,.3)}
+.oi{background:linear-gradient(135deg,#3f8fea,#1f3f9a)}.opt.partner{background:#eef5ff;border:1px solid var(--line)}.opt.partner .oi{background:#0f7a63}
+.ok .ring{background:#e3effd;color:var(--co)}
+.dot.on::after{background:var(--co)}
+.steps .steps i,.steps i{background:#3f8fea}
+.toast{background:var(--ink);color:#fff}
+.brand{margin-left:auto;text-align:center;font-family:Prompt,sans-serif;font-weight:700;font-size:15px;line-height:1;color:var(--ink);letter-spacing:.02em}
+.brand small{display:block;font-size:10px;font-weight:500;color:#3f8fea;letter-spacing:.08em;margin-top:2px}
+.slide.pic{padding:0;min-height:0;aspect-ratio:4/5;background:#e3effd;border:1px solid #fff;box-shadow:0 10px 30px rgba(31,63,154,.14)}
+.slide.pic img{position:static;width:100%;height:100%;object-fit:cover;display:block}
+.sbtn.over{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);margin:0;white-space:nowrap;box-shadow:0 6px 16px rgba(31,63,154,.3)}
+.ttl{font-size:20px}
+.steps3{display:grid;gap:10px}
+.st{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:20px;padding:12px 14px;box-shadow:0 6px 18px rgba(31,63,154,.07);font:inherit;color:inherit}
+button.st{cursor:pointer}
+.st i{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-style:italic;font-family:Prompt,sans-serif;font-weight:700;color:#fff;background:linear-gradient(135deg,#8cc2fb,#3f8fea)}
+.st b{display:block;font-family:Prompt,sans-serif;font-style:italic;font-size:18px}
+.st small{display:block;font-size:14px;color:var(--ink)}
+.st em{display:block;font-style:normal;font-size:13px;color:var(--co);font-weight:600;margin-top:2px}.st em.m{color:var(--mute);font-weight:400}
 </style>
 </head>
 <body>
@@ -131,9 +183,9 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(-
 <script>
 {
 const P=[
- {id:'gel',name:'SKINSIP Barrier Repair Gel',short:'เจลซ่อมเกราะผิว',price:490,pcs:1,shape:'tube',desc:'เจลเนื้อบางเบา ช่วยปลอบประโลมผิวที่แห้ง แดง แสบ และเสริมความแข็งแรงของเกราะผิว',use:'ทาบางๆ หลังล้างหน้า เช้าและเย็น'},
- {id:'mousse',name:'SKINSIP Barrier Comfort Cleansing Mousse',short:'มูสล้างหน้าอ่อนโยน',price:390,pcs:1,shape:'bottle',desc:'มูสล้างหน้าฟองนุ่ม ทำความสะอาดอย่างอ่อนโยน ไม่ทำให้ผิวตึง',use:'กด 1–2 ครั้ง นวดเบาๆ แล้วล้างออก'},
- {id:'duo',name:'SKINSIP Barrier Duo',short:'เซ็ตคู่ เจล + มูส',price:790,pcs:2,shape:'duo',desc:'ครบขั้นตอนพื้นฐานสำหรับผิวที่เกราะอ่อนแอ ล้างอ่อนโยนแล้วเติมเกราะผิว',use:'เช้า–เย็น: มูส แล้วตามด้วยเจล'}
+ {id:'gel',name:'SKINSIP Barrier Repair Gel',short:'เจลซ่อมเกราะผิว',price:490,pcs:1,shape:'tube',desc:'สเต็ป 2 Repair · เจลบำรุงเนื้อบางเบา เติมความชุ่มชื้นและเสริมเกราะป้องกันผิวให้แข็งแรง สบายผิว ไม่เหนอะหนะ',use:'ทาบางๆ หลังล้างหน้า เช้าและเย็น'},
+ {id:'mousse',name:'SKINSIP Barrier Comfort Cleansing Mousse',short:'มูสล้างหน้าอ่อนโยน',price:390,pcs:1,shape:'bottle',desc:'สเต็ป 1 Cleanse · มูสล้างหน้าฟองนุ่ม ทำความสะอาดอย่างอ่อนโยน ไม่ทำลายน้ำมันธรรมชาติบนผิว',use:'กด 1–2 ครั้ง นวดเบาๆ แล้วล้างออก'},
+ {id:'duo',name:'SKINSIP Barrier Duo',short:'เซ็ตคู่ เจล + มูส',price:790,pcs:2,shape:'duo',desc:'Cleanse + Repair ครบ 2 สเต็ปแรกของการกู้ผิวฉบับ Less But Better ล้างอ่อนโยนแล้วเติมเกราะผิว',use:'เช้า–เย็น: มูส แล้วตามด้วยเจล'}
 ];
 const S={view:'login',tab:'home',user:null,cart:{},orders:[],sel:null,chat:[],ref:'',filter:'ทั้งหมด',agent:false,approved:false,points:0,back:null};
 const CODES=['SK001','SK002','SK003','SK004','SK005','SK006','SK007','SK008','SK009'];
@@ -165,8 +217,8 @@ const baht=n=>'฿'+n.toLocaleString('th-TH');
 const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1800)};
 const cartN=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
 const cartSum=()=>Object.entries(S.cart).reduce((a,[k,q])=>a+P.find(p=>p.id===k).price*q,0);
-const tube=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><path d="M14 8h32l-3 70H17z" fill="#fff" stroke="#2340d8" stroke-width="2"/><path d="M14 8h32v8H14z" fill="#2340d8"/><rect x="22" y="78" width="16" height="16" rx="3" fill="#2340d8"/><rect x="19" y="36" width="22" height="22" rx="3" fill="#d9f4ec"/><circle cx="30" cy="47" r="5" fill="#ff5a4e"/><path d="M40 16l-2 62" stroke="#e2e5f0" stroke-width="3"/></svg>`;
-const bottle=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><rect x="24" y="4" width="8" height="10" fill="#2340d8"/><path d="M32 8h12v5H32z" fill="#2340d8"/><rect x="20" y="14" width="16" height="10" rx="2" fill="#2340d8"/><rect x="12" y="24" width="32" height="70" rx="10" fill="#fff" stroke="#2340d8" stroke-width="2"/><rect x="17" y="44" width="22" height="26" rx="3" fill="#d9f4ec"/><circle cx="28" cy="57" r="5" fill="#ff5a4e"/><path d="M38 30v58" stroke="#e2e5f0" stroke-width="3"/></svg>`;
+const tube=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><path d="M14 8h32l-3 70H17z" fill="#fff" stroke="#1f3f9a" stroke-width="2"/><path d="M14 8h32v8H14z" fill="#1f3f9a"/><rect x="22" y="78" width="16" height="16" rx="3" fill="#1f3f9a"/><rect x="19" y="36" width="22" height="22" rx="3" fill="#e3effd"/><circle cx="30" cy="47" r="5" fill="#5aa9f5"/><path d="M40 16l-2 62" stroke="#e2e5f0" stroke-width="3"/></svg>`;
+const bottle=(w=70)=>`<svg viewBox="0 0 60 100" width="${w}" aria-hidden="true"><rect x="24" y="4" width="8" height="10" fill="#1f3f9a"/><path d="M32 8h12v5H32z" fill="#1f3f9a"/><rect x="20" y="14" width="16" height="10" rx="2" fill="#1f3f9a"/><rect x="12" y="24" width="32" height="70" rx="10" fill="#fff" stroke="#1f3f9a" stroke-width="2"/><rect x="17" y="44" width="22" height="26" rx="3" fill="#e3effd"/><circle cx="28" cy="57" r="5" fill="#5aa9f5"/><path d="M38 30v58" stroke="#e2e5f0" stroke-width="3"/></svg>`;
 const art=(p,w)=>p.shape==='tube'?tube(w):p.shape==='bottle'?bottle(w):`<span style="display:flex;align-items:flex-end">${tube(w*.62)}${bottle(w*.62)}</span>`;
 const I={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',shop:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',play:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 9l5 3-5 3z"/>',me:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',agent:'<path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 15.6 7 18.2l1-5.5-4-3.9L9.5 8z"/>',doc:'<path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/>'};
 const ic=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${I[k]}</svg>`;
@@ -174,14 +226,18 @@ const top=(t,back)=>`<div class="top">${back?`<button class="back" data-go="${ba
 
 /* SLIDES: ใส่รูปจริงได้ที่ img: 'img/slide1.webp' (รูปแนวนอน 16:9) — ถ้าไม่มี img จะวาดภาพสินค้าแทน */
 const SLIDES=[
- {t:'ดูแลเกราะผิวทุกวัน',d:'ไม่แน่ใจว่าเลือกตัวไหน ถาม SKINSIP Bot เรื่องสินค้าได้เลย',b:'ถามเรื่องสินค้า',a:'data-tab="consult"',art:'duo',bg:'#2340d8'},
- {t:'Barrier Duo คุ้มกว่า',d:'มูสล้างหน้า + เจลบำรุง ครบขั้นตอนในเซ็ตเดียว',b:'ดูเซ็ตคู่',a:'data-p="duo"',art:'duo',bg:'#0f7a63'},
- {t:'Barrier Repair Gel',d:'เจลเนื้อบางเบา ทาง่าย ใช้ได้ทุกวัน เช้าและเย็น',b:'ดูสินค้า',a:'data-p="gel"',art:'gel',bg:'#1b2a8f'},
- {t:'ชวนเพื่อนใช้ ได้ค่าคอม',d:'สมัครเป็นตัวแทน รับลิงก์และโค้ดของคุณเอง',b:'สมัครตัวแทน',a:'data-go="agent"',art:'mousse',bg:'#ff5a4e'}
+ {img:'img/s1.webp',alt:'คุณไม่ได้ผิวแพ้ง่าย แต่แค่เกราะผิวพังหรือเปล่า'},
+ {img:'img/s2.webp',alt:'แต่งหน้าไม่ติด รองพื้นเป็นคราบ เกราะป้องกันผิวกำลังอ่อนแอ'},
+ {img:'img/s3.webp',alt:'ผิวพังซ้ำซาก ควรประโคมต่อหรือพักหน้า'},
+ {img:'img/s4.webp',alt:'ถ้าเลือกประโคมต่อ ผิวยิ่งระคายเคือง'},
+ {img:'img/s5.webp',alt:'ถ้าเลือกพักหน้า ผิวแห้งลอก หน้ามันขาดน้ำ'},
+ {img:'img/s6.webp',alt:'รู้จักเกราะป้องกันผิว Skin Barrier'},
+ {img:'img/s7.webp',alt:'ผิวมันก็ต้องการความชุ่มชื้น'},
+ {img:'img/s8.webp',alt:'3 สเต็ปกู้ผิวฉบับ Less But Better',a:'data-p="duo"',b:'เริ่มด้วย Barrier Duo'}
 ];
 const strip=x=>x.replace(/<\/?svg[^>]*>/g,'');
 const slideArt=k=>k==='duo'?`<g transform="translate(6 30) scale(1.1)">${strip(tube(60))}</g><g transform="translate(56 40)">${strip(bottle(60))}</g>`:k==='gel'?`<g transform="translate(24 14) scale(1.5)">${strip(tube(60))}</g>`:`<g transform="translate(24 18) scale(1.45)">${strip(bottle(60))}</g>`;
-const slider=()=>`<div class="slider"><div class="track" id="track">${SLIDES.map((x,i)=>`<div class="slide" style="background:${x.bg}" aria-label="สไลด์ ${i+1} จาก ${SLIDES.length}">${x.img?`<img src="${x.img}" alt="">`:`<svg viewBox="0 0 120 140" preserveAspectRatio="xMidYMax meet">${slideArt(x.art)}</svg>`}<div class="sc"><h1>${x.t}</h1><p>${x.d}</p><button class="sbtn" ${x.a}>${x.b}</button></div></div>`).join('')}</div><div class="dots">${SLIDES.map((x,i)=>`<button class="dot${i?'':' on'}" data-dot="${i}" aria-label="ไปสไลด์ ${i+1}"></button>`).join('')}</div></div>`;
+const slider=()=>`<div class="slider"><div class="track" id="track">${SLIDES.map((x,i)=>`<div class="slide pic" aria-label="สไลด์ ${i+1} จาก ${SLIDES.length}"><img src="${x.img}" alt="${x.alt}" loading="${i?'lazy':'eager'}">${x.b?`<button class="sbtn over" ${x.a}>${x.b}</button>`:''}</div>`).join('')}</div><div class="dots">${SLIDES.map((x,i)=>`<button class="dot${i?'':' on'}" data-dot="${i}" aria-label="ไปสไลด์ ${i+1}"></button>`).join('')}</div></div>`;
 const V={
 login:()=>`<main style="padding-bottom:30px"><div class="hero" style="min-height:300px;margin-top:10px"><h1>SKINSIP</h1><p>ดูแลเกราะผิวทุกวัน ซื้อสินค้า ถามข้อมูล และติดตามออเดอร์ได้ในที่เดียว</p><svg viewBox="0 0 120 140" preserveAspectRatio="xMidYMax meet">${'<g transform="translate(6 30) scale(1.1)">'+tube(60).replace(/<\/?svg[^>]*>/g,'')+'</g><g transform="translate(56 40) scale(1)">'+bottle(60).replace(/<\/?svg[^>]*>/g,'')+'</g>'}</svg></div>
 <button class="btn line" data-act="line">เข้าสู่ระบบด้วย LINE</button><button class="btn ghost" data-act="guest">ดูสินค้าก่อน (ไม่ต้องสมัคร)</button><p class="note">ต้นแบบ: ปุ่ม LINE จำลองการดึงชื่อจากบัญชี LINE</p></main>`,
@@ -194,10 +250,16 @@ signup:()=>`${top('สมัครสมาชิก','login')}<main><div class=
 <label class="check"><input type="checkbox" id="c2">ยินยอมรับข่าวสารและโปรโมชั่นผ่าน LINE</label>
 <button class="btn" type="submit">รับรหัส OTP</button></form></main>`,
 otp:()=>`${top('ยืนยันเบอร์โทร','signup')}<main><div class="steps"><i style="width:100%"></i></div><p>ส่งรหัส 6 หลักไปที่ <b>${esc(S.user.phone)}</b></p><div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="o${i}" inputmode="numeric" maxlength="1" aria-label="รหัสหลักที่ ${i+1}">`).join('')}</div><button class="btn" data-act="otp">ยืนยัน</button><p class="note">ต้นแบบ: ใส่เลขอะไรก็ได้ 6 หลัก</p></main>`,
-home:()=>`<main><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?'SILVER MEMBER':'ยังไม่ได้เข้าสู่ระบบ'}</div></div></div>
+home:()=>`<main><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?'SILVER MEMBER':'ยังไม่ได้เข้าสู่ระบบ'}</div></div><div class="brand">SKINSIP<small>BLUE LAB</small></div></div>
 ${slider()}
 <div class="credit"><span>แต้มสะสม <b style="color:var(--ink)">${S.points.toLocaleString()} แต้ม</b></span><span>10 แต้ม = ฿1</span></div>${S.orders.length?`<div class="refer" style="display:flex;align-items:center;gap:10px;margin-top:10px"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0;background:var(--co);color:#fff" data-reorder="0">สั่งซ้ำ</button></div>`:''}
 <div class="quick"><button data-tab="shop">${ic('shop')}ซื้อสินค้า</button><button data-tab="consult">${ic('chat')}ถามสินค้า</button><button data-tab="reviews">${ic('play')}รีวิว</button><button data-go="agent">${ic('agent')}เป็นตัวแทน</button></div>
+<h2 class="ttl">3 สเต็ปกู้ผิว <span class="sky">Less But Better</span></h2>
+<div class="steps3">
+ <button class="st" data-p="mousse"><i>1</i><span><b class="sky">Cleanse</b><small>ล้างหน้าอย่างอ่อนโยน ไม่ทำลายน้ำมันธรรมชาติ</small><em>Barrier Comfort Cleansing Mousse ›</em></span></button>
+ <button class="st" data-p="gel"><i>2</i><span><b class="sky">Repair</b><small>เติมความชุ่มชื้น เสริมเกราะป้องกันผิว</small><em>Barrier Repair Gel ›</em></span></button>
+ <div class="st"><i>3</i><span><b class="sky">Protect</b><small>ทากันแดดทุกเช้า ไม่ให้ผิวโดนทำร้ายซ้ำ</small><em class="m">ใช้กันแดดที่คุณใช้อยู่ได้เลย</em></span></div>
+</div>
 <h2>สินค้าแนะนำ</h2>${plist()}
 <h2>ออเดอร์ล่าสุด</h2>${S.orders.length?orderRows(1):'<p class="mute">ยังไม่มีออเดอร์</p>'}</main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
 shop:()=>`${top('ร้านค้า SKINSIP')}<main><p class="small">ราคาในต้นแบบเป็นราคาตัวอย่าง แอดมินกำหนดจริงในหลังบ้าน</p>${plist()}${cartN()?`<button class="btn" data-go="cart">ไปที่ตะกร้า (${cartN()}) · ${baht(cartSum())}</button>`:''}</main>`,
