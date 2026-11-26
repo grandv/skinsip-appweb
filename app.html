@@ -321,7 +321,7 @@ document.addEventListener('submit',e=>{e.preventDefault();const id=e.target.id;
   const pcs=Object.entries(lines).reduce((a,[k,q])=>a+P.find(p=>p.id===k).pcs*q,0);
   const use=$('usePts')&&$('usePts').checked?ptsDisc():0;const total=cartSum()-use;const earn=Math.floor(total/10);
   S.points=S.points-use*10+(S.user?earn:0);
-  const o={no:'SKS'+String(20001+Math.floor(Math.random()*8999)),date:new Date().toISOString(),items,lines,pcs,total,discount:use,pm,status:'ชำระแล้ว · รอจัดส่ง',ref:okRef?ref:'',earn:S.user?earn:0,
+  const o={no:'SKS'+String(20001+Math.floor(Math.random()*8999)),date:new Date().toISOString(),items,lines,pcs,total,discount:use,pm,status:'รอจัดส่ง',ref:okRef?ref:'',earn:S.user?earn:0,
    customer:{name:$('an').value.trim(),phone:$('ap').value.trim(),address:$('ad').value.trim(),member:!!S.user}};
   S.orders.unshift(o);tell({type:'skinsip-order',order:o});fbOrder(o);
   if(ref&&!okRef)toast('โค้ดไม่ถูกต้องหรือเป็นโค้ดของคุณเอง บันทึกเป็นออเดอร์ขายตรง');S.ref=ref;S.cart={};return go('done')}
