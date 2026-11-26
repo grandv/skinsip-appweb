@@ -236,6 +236,15 @@ main.home{padding-bottom:90px}
 .top,.nav{flex:none}
 .nav{position:static}
 .fab{position:absolute;right:16px;bottom:78px;margin:0}
+
+/* ---- bigger story cards: width follows the space left above the fold ---- */
+.story{flex:0 0 auto;width:clamp(150px,min(60%,calc((100dvh - 540px) * .8)),300px);max-width:none}
+@media(min-width:700px){.story{width:clamp(150px,min(60%,calc((min(100dvh,968px) - 588px) * .8)),300px)}}
+.sarr{top:calc(50% - 22px)}
+
+.fab{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%}
+.fab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.fab svg{width:26px;height:26px}
 </style>
 </head>
 <body>
