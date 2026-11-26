@@ -255,6 +255,13 @@ main.home{padding-bottom:10px}
 .mini button{min-height:52px}
 .mini button:first-child{padding:0 14px}
 .fab{bottom:76px;right:16px}
+
+/* ---- bottom row: 3 equal buttons, no floating chat button on home ---- */
+.mini{grid-template-columns:repeat(3,minmax(0,1fr));padding-right:0;gap:8px}
+.mini button,.mini button:first-child{flex-direction:column;justify-content:center;gap:4px;min-height:60px;padding:6px 4px;text-align:center;font-size:13px;border-radius:16px}
+.mini button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.mini button.hl{background:linear-gradient(135deg,#6db4f7,#3f8fea);border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(63,143,234,.3)}
+.mini button.hl svg{color:#fff}
 </style>
 </head>
 <body>
@@ -343,8 +350,8 @@ home:()=>`<main class="home"><div class="member"><div class="av">${esc((S.user?.
 <div class="hd2"><h2 class="ttl">ช้อป <span class="sky">Less But Better</span></h2><button class="lnk" data-tab="shop">ดูทั้งหมด ›</button></div>
 <div class="pcards">${['duo','gel','mousse'].map(id=>{const p=P.find(x=>x.id===id);return `<div class="pc${id==='duo'?' hot':''}" data-p="${p.id}" role="button" tabindex="0">${id==='duo'?'<span class="tag">คุ้มสุด</span>':''}<div class="pa">${art(p,id==='duo'?70:56)}</div><b>${p.short}</b><div class="pr"><span class="price">${baht(p.price)}</span><button class="add" data-add="${p.id}" aria-label="ใส่ตะกร้า ${p.short}">+</button></div></div>`}).join('')}</div>
 ${S.orders.length?`<div class="refer row2"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">${esc(S.orders[0].items)} · สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0" data-reorder="0">สั่งซ้ำ</button></div>`:''}
-<div class="mini"><button data-tab="reviews">${ic('play')}<span>รีวิว</span></button><button data-go="agent">${ic('agent')}<span>${S.approved?'แดชบอร์ดตัวแทน':'ชวนเพื่อนรับค่าคอม'}</span></button></div>
-</main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
+<div class="mini"><button data-tab="reviews">${ic('play')}<span>รีวิว</span></button><button data-go="agent">${ic('agent')}<span>${S.approved?'ตัวแทน':'ชวนเพื่อนรับคอม'}</span></button><button class="hl" data-act="fab">${ic('chat')}<span>แชทกับเรา</span></button></div>
+</main>`,
 
 shop:()=>`${top('ร้านค้า SKINSIP')}<main><p class="small">ราคาในต้นแบบเป็นราคาตัวอย่าง แอดมินกำหนดจริงในหลังบ้าน</p>${plist()}${cartN()?`<button class="btn" data-go="cart">ไปที่ตะกร้า (${cartN()}) · ${baht(cartSum())}</button>`:''}</main>`,
 product:()=>{const p=P.find(x=>x.id===S.sel);return `${top(p.short,S.back||'shop')}<main><div class="big">${art(p,150)}</div><h2>${p.name}</h2><p class="price" style="font-size:24px">${baht(p.price)}</p><p>${p.desc}</p><p class="mute">วิธีใช้: ${p.use}</p>${p.id==='duo'?'<span class="tag">คุ้มกว่าซื้อแยก '+baht(P[0].price+P[1].price-p.price)+'</span>':''}<button class="btn" data-add="${p.id}">ใส่ตะกร้า</button><button class="btn ghost" data-tab="consult">ไม่แน่ใจ? ถามบอทก่อน</button></main>`},
