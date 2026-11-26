@@ -219,6 +219,13 @@ button.st{cursor:pointer}
 .nav button:focus-visible{outline:2px solid #8cc2fb;outline-offset:-4px}
 .badge{background:#5aa9f5}
 .fab{background:linear-gradient(135deg,#6db4f7,#3f8fea);box-shadow:0 8px 22px rgba(63,143,234,.4)}
+
+.swrap{position:relative}
+.stories{cursor:grab}.stories:active{cursor:grabbing}
+.story img{-webkit-user-drag:none;user-select:none;pointer-events:none}
+.sarr{position:absolute;top:calc(50% - 22px);width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--co);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 4px 12px rgba(31,63,154,.15);display:none}
+.sarr.l{left:-6px}.sarr.r{right:-6px}
+@media(hover:hover) and (pointer:fine){.sarr{display:block}}
 </style>
 </head>
 <body>
@@ -302,7 +309,7 @@ signup:()=>`${top('สมัครสมาชิก','login')}<main><div class=
 otp:()=>`${top('ยืนยันเบอร์โทร','signup')}<main><div class="steps"><i style="width:100%"></i></div><p>ส่งรหัส 6 หลักไปที่ <b>${esc(S.user.phone)}</b></p><div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="o${i}" inputmode="numeric" maxlength="1" aria-label="รหัสหลักที่ ${i+1}">`).join('')}</div><button class="btn" data-act="otp">ยืนยัน</button><p class="note">ต้นแบบ: ใส่เลขอะไรก็ได้ 6 หลัก</p></main>`,
 home:()=>`<main class="home"><div class="member"><div class="av">${esc((S.user?.name||'ผ')[0])}</div><div style="flex:1"><b>${S.user?esc(S.user.name):'ผู้เยี่ยมชม'}</b><div class="tier">${S.user?`SILVER MEMBER · ${S.points.toLocaleString()} แต้ม`:'ยังไม่ได้เข้าสู่ระบบ'}</div></div><div class="brand">SKINSIP<small>BLUE LAB</small></div></div>
 <div class="hd2"><h2 class="ttl">เกราะผิว<span class="sky">อ่อนแอ</span>หรือเปล่า?</h2><span class="small">แตะเพื่ออ่าน</span></div>
-${slider()}
+<div class="swrap">${slider()}<button class="sarr l" data-sgo="-1" aria-label="เลื่อนซ้าย">‹</button><button class="sarr r" data-sgo="1" aria-label="เลื่อนขวา">›</button></div>
 <div class="steprow" aria-label="3 สเต็ปกู้ผิว Less But Better"><button data-p="mousse"><i>1</i>Cleanse</button><span>›</span><button data-p="gel"><i>2</i>Repair</button><span>›</span><div><i>3</i>Protect</div></div>
 <div class="hd2"><h2 class="ttl">ช้อป <span class="sky">Less But Better</span></h2><button class="lnk" data-tab="shop">ดูทั้งหมด ›</button></div>
 <div class="pcards">${['duo','gel','mousse'].map(id=>{const p=P.find(x=>x.id===id);return `<div class="pc${id==='duo'?' hot':''}" data-p="${p.id}" role="button" tabindex="0">${id==='duo'?'<span class="tag">คุ้มสุด</span>':''}<div class="pa">${art(p,id==='duo'?70:56)}</div><b>${p.short}</b><div class="pr"><span class="price">${baht(p.price)}</span><button class="add" data-add="${p.id}" aria-label="ใส่ตะกร้า ${p.short}">+</button></div></div>`}).join('')}</div>
@@ -380,7 +387,17 @@ const render=()=>{
  initSlider();
 };
 let sTimer=null;
-const initSlider=()=>{clearInterval(sTimer)};
+const initSlider=()=>{clearInterval(sTimer);const tr=$('track');if(!tr||!tr.classList.contains('stories'))return;
+ const items=[...tr.children];const step=()=>items[1]?items[1].offsetLeft-items[0].offsetLeft:tr.clientWidth;
+ const go=d=>{const max=tr.scrollWidth-tr.clientWidth;const nx=tr.scrollLeft+d*step();tr.scrollTo({left:d>0&&tr.scrollLeft>=max-4?0:Math.max(0,nx),behavior:'smooth'})};
+ tr._go=go;let pause=0;const hold=()=>{pause=Date.now()+6000};
+ ['pointerdown','wheel','touchstart','focusin'].forEach(ev=>tr.addEventListener(ev,hold,{passive:true}));
+ /* mouse drag to slide on computers */
+ let dn=null,moved=false;tr.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;dn={x:e.clientX,l:tr.scrollLeft};moved=false;tr.style.scrollSnapType='none'});
+ window.addEventListener('pointermove',e=>{if(!dn)return;const dx=e.clientX-dn.x;if(Math.abs(dx)>5)moved=true;tr.scrollLeft=dn.l-dx});
+ window.addEventListener('pointerup',()=>{if(!dn)return;dn=null;tr.style.scrollSnapType='';const s=step();tr.scrollTo({left:Math.round(tr.scrollLeft/s)*s,behavior:'smooth'})});
+ tr.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)sTimer=setInterval(()=>{if(!document.body.contains(tr)){clearInterval(sTimer);return}if(Date.now()<pause||document.hidden||($('lb')&&!$('lb').hidden))return;go(1)},3500)};
 const lbOpen=n=>{let lb=$('lb');if(!lb){document.body.insertAdjacentHTML('beforeend',lbHtml());lb=$('lb')}lb.hidden=false;const tr=$('lbtrack');requestAnimationFrame(()=>{tr.scrollLeft=n*tr.clientWidth});lb.querySelector('.lbx').focus()};
 const lbClose=()=>{const lb=$('lb');if(lb)lb.hidden=true};
 const lbNav=d=>{const tr=$('lbtrack');const c=Math.round(tr.scrollLeft/tr.clientWidth);tr.scrollTo({left:Math.max(0,Math.min(SLIDES.length-1,c+d))*tr.clientWidth,behavior:'smooth'})};
@@ -390,6 +407,7 @@ const go=v=>{S.view=v;if(MAIN.includes(v))S.tab=v;render()};
 document.addEventListener('click',e=>{
  if(e.target.id==='sheet')return closeSheet();
  const ro=e.target.closest('[data-reorder]');if(ro){const o=S.orders[+ro.dataset.reorder];if(o){S.cart={...o.lines};toast('ใส่ชุดเดิมลงตะกร้าแล้ว');go('cart')}return}
+ const sg=e.target.closest('[data-sgo]');if(sg){const tr=$('track');tr&&tr._go&&tr._go(+sg.dataset.sgo);return}
  const sy=e.target.closest('[data-story]');if(sy)return lbOpen(+sy.dataset.story);
  const ln=e.target.closest('[data-lbnav]');if(ln)return lbNav(+ln.dataset.lbnav);
  if(e.target.closest('[data-lbclose]'))lbClose();
