@@ -232,8 +232,13 @@ auth.onAuthStateChanged(async u=>{unsubs.splice(0).forEach(f=>f());
  let admin=ME===OWNER;if(!admin){try{admin=(await db.doc('admins/'+ME).get()).exists}catch(e){}}
  if(!admin){$('gate').hidden=false;$('switchAcc').hidden=false;$('lMsg').textContent=ME+' ยังไม่ได้รับสิทธิ์ ให้เจ้าของเพิ่มอีเมลนี้ในแท็บตั้งค่า แล้วลองใหม่';return}
  $('gate').hidden=true;$('teamBox').hidden=ME!==OWNER;startLive();if(ME===OWNER)startTeam()});
-const google=()=>{const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});return auth.signInWithPopup(p)};
-$('fLogin').addEventListener('submit',async e=>{e.preventDefault();$('lMsg').textContent='กำลังเปิดหน้าต่าง Google...';try{await google()}catch(err){$('lMsg').textContent='เข้าสู่ระบบไม่สำเร็จ: '+(err.code||'')}});
+const UA=navigator.userAgent||'';
+const INAPP=/\bLine\/|FBAN|FBAV|Instagram|MicroMessenger|; wv\)|TikTok|musical_ly/i.test(UA);
+/* LINE: force the system browser, Google sign-in is blocked inside in-app browsers */
+if(/\bLine\//i.test(UA)&&!/openExternalBrowser=1/.test(location.search)){location.replace(location.pathname+'?openExternalBrowser=1'+location.hash)}
+const google=()=>{if(INAPP){$('lMsg').innerHTML='เปิดในแอปนี้ล็อกอิน Google ไม่ได้ กรุณาเปิดลิงก์นี้ใน Chrome หรือ Safari<br><b>'+esc(location.origin+location.pathname)+'</b>';return Promise.resolve()}
+ const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});return auth.signInWithPopup(p)};
+$('fLogin').addEventListener('submit',async e=>{e.preventDefault();$('lMsg').textContent='กำลังเปิดหน้าต่าง Google...';try{await google()}catch(err){const c=err.code||'';$('lMsg').textContent=c==='auth/popup-blocked'?'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน กรุณาอนุญาตป๊อปอัปสำหรับเว็บนี้แล้วกดใหม่':c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request'?'ปิดหน้าต่างล็อกอินก่อนเสร็จ กดใหม่อีกครั้ง':'เข้าสู่ระบบไม่สำเร็จ: '+c+' ถ้าเปิดจากแอปแชท ให้เปิดใน Chrome หรือ Safari แทน'}});
 $('switchAcc').addEventListener('click',async()=>{await auth.signOut();google().catch(err=>{$('lMsg').textContent='เข้าสู่ระบบไม่สำเร็จ: '+(err.code||'')})});
 $('logout').addEventListener('click',()=>auth.signOut());
 const startTeam=()=>{unsubs.push(db.collection('admins').onSnapshot(snap=>{const L=snap.docs.map(d=>d.id).sort();

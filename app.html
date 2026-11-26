@@ -245,6 +245,10 @@ main.home{padding-bottom:90px}
 .fab{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%}
 .fab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .fab svg{width:26px;height:26px}
+
+/* ---- story size fitted by script to fill down to the tab bar ---- */
+main.home{padding-bottom:10px}
+.story{width:var(--sw,clamp(150px,60%,300px))}
 </style>
 </head>
 <body>
@@ -407,6 +411,7 @@ const render=()=>{
 };
 let sTimer=null;
 const initSlider=()=>{clearInterval(sTimer);const tr=$('track');if(!tr||!tr.classList.contains('stories'))return;
+ fitStories();
  const items=[...tr.children];const step=()=>items[1]?items[1].offsetLeft-items[0].offsetLeft:tr.clientWidth;
  const go=d=>{const max=tr.scrollWidth-tr.clientWidth;const nx=tr.scrollLeft+d*step();tr.scrollTo({left:d>0&&tr.scrollLeft>=max-4?0:Math.max(0,nx),behavior:'smooth'})};
  tr._go=go;let pause=0;const hold=()=>{pause=Date.now()+6000};
@@ -417,6 +422,11 @@ const initSlider=()=>{clearInterval(sTimer);const tr=$('track');if(!tr||!tr.clas
  window.addEventListener('pointerup',()=>{if(!dn)return;dn=null;tr.style.scrollSnapType='';const s=step();tr.scrollTo({left:Math.round(tr.scrollLeft/s)*s,behavior:'smooth'})});
  tr.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)sTimer=setInterval(()=>{if(!document.body.contains(tr)){clearInterval(sTimer);return}if(Date.now()<pause||document.hidden||($('lb')&&!$('lb').hidden))return;go(1)},3500)};
+const fitStories=()=>{const m=document.querySelector('main.home'),st=document.querySelector('.story');if(!m||!st)return;
+ document.documentElement.style.removeProperty('--sw');const h0=st.getBoundingClientRect().height;const last=m.lastElementChild;const gap=m.getBoundingClientRect().bottom-10-last.getBoundingClientRect().bottom-(m.scrollHeight-m.clientHeight);
+ const maxW=m.clientWidth*0.82;const h=Math.max(180,Math.min(h0+gap-6,maxW*1.25));document.documentElement.style.setProperty('--sw',(h*0.8).toFixed(1)+'px')};
+let fitT=null;window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitStories,120)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitStories());
 const lbOpen=n=>{let lb=$('lb');if(!lb){document.body.insertAdjacentHTML('beforeend',lbHtml());lb=$('lb')}lb.hidden=false;const tr=$('lbtrack');requestAnimationFrame(()=>{tr.scrollLeft=n*tr.clientWidth});lb.querySelector('.lbx').focus()};
 const lbClose=()=>{const lb=$('lb');if(lb)lb.hidden=true};
 const lbNav=d=>{const tr=$('lbtrack');const c=Math.round(tr.scrollLeft/tr.clientWidth);tr.scrollTo({left:Math.max(0,Math.min(SLIDES.length-1,c+d))*tr.clientWidth,behavior:'smooth'})};
