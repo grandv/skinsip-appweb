@@ -249,6 +249,12 @@ main.home{padding-bottom:90px}
 /* ---- story size fitted by script to fill down to the tab bar ---- */
 main.home{padding-bottom:10px}
 .story{width:var(--sw,clamp(150px,60%,300px))}
+
+/* ---- bottom row: [review] [invite] [chat FAB] in one line ---- */
+.mini{grid-template-columns:auto minmax(0,1fr);padding-right:66px}
+.mini button{min-height:52px}
+.mini button:first-child{padding:0 14px}
+.fab{bottom:76px;right:16px}
 </style>
 </head>
 <body>
@@ -337,7 +343,7 @@ home:()=>`<main class="home"><div class="member"><div class="av">${esc((S.user?.
 <div class="hd2"><h2 class="ttl">ช้อป <span class="sky">Less But Better</span></h2><button class="lnk" data-tab="shop">ดูทั้งหมด ›</button></div>
 <div class="pcards">${['duo','gel','mousse'].map(id=>{const p=P.find(x=>x.id===id);return `<div class="pc${id==='duo'?' hot':''}" data-p="${p.id}" role="button" tabindex="0">${id==='duo'?'<span class="tag">คุ้มสุด</span>':''}<div class="pa">${art(p,id==='duo'?70:56)}</div><b>${p.short}</b><div class="pr"><span class="price">${baht(p.price)}</span><button class="add" data-add="${p.id}" aria-label="ใส่ตะกร้า ${p.short}">+</button></div></div>`}).join('')}</div>
 ${S.orders.length?`<div class="refer row2"><div style="flex:1"><b>ใกล้หมดหรือยัง?</b><div class="small" style="color:inherit">${esc(S.orders[0].items)} · สั่งชุดเดิมได้ในคลิกเดียว</div></div><button class="sbtn" style="margin:0" data-reorder="0">สั่งซ้ำ</button></div>`:''}
-<div class="mini"><button data-tab="reviews">${ic('play')}<span>รีวิวผู้ใช้</span></button><button data-go="agent">${ic('agent')}<span>${S.approved?'แดชบอร์ดตัวแทน':'ชวนเพื่อนรับค่าคอม'}</span></button></div>
+<div class="mini"><button data-tab="reviews">${ic('play')}<span>รีวิว</span></button><button data-go="agent">${ic('agent')}<span>${S.approved?'แดชบอร์ดตัวแทน':'ชวนเพื่อนรับค่าคอม'}</span></button></div>
 </main><button class="fab" data-act="fab" aria-label="ติดต่อเรา">${ic('chat')}<span>แชท</span></button>`,
 
 shop:()=>`${top('ร้านค้า SKINSIP')}<main><p class="small">ราคาในต้นแบบเป็นราคาตัวอย่าง แอดมินกำหนดจริงในหลังบ้าน</p>${plist()}${cartN()?`<button class="btn" data-go="cart">ไปที่ตะกร้า (${cartN()}) · ${baht(cartSum())}</button>`:''}</main>`,
